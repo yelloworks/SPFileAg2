@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package dslVersion="1.0.0.0" 
+        Id="264ec4cf-838f-498a-ad1d-298c34e9e13e" 
+        solutionId="264ec4cf-838f-498a-ad1d-298c34e9e13e" 
+        xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel" 
+        name="SPFile"
+        sharePointProductVersion="15.0">
+  <features>
+        <featureReference itemId="524c6c78-a9e0-411d-a83d-d3bb3ed60a0a" />
+  </features>
+</package>
