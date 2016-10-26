@@ -1,1 +1,57 @@
 ﻿/* Place custom styles below */
+
+.menu-btn-big,
+.menu-btn-small {
+    font-size: 1.2rem;
+    min-width: 3rem;
+    border: 0;
+    color: #000000;
+    background-color: #ffffff;   
+}
+
+.menu-btn-big {
+    height: 100%;
+}
+
+.menu-btn-small {
+    height: 50%;
+    text-align: left;
+    width: 100%
+}
+
+
+.menu-btn-group {
+    height: 100%;
+    position: relative;
+    display: block;
+    float: left;
+    padding: 5px;
+    max-width: 11rem;
+    
+}
+
+.menu-panel {
+    z-index: 1;
+    position: relative;
+    margin-top: -1px;
+    border: 1px #d4d4d4 solid;
+    background-color: #ffffff;
+    height: 120px;
+}
+
+.menu-panel-group {
+    height: 100%;
+    position: relative;
+    display: block;
+    float: left;
+    padding: 0 5px;
+    border-right: 1px #d4d4d4 solid;
+}
+
+span.glyphicon.big {
+    font-size: 6rem;
+}
+
+span.glyphicon {
+    font-size: 1.8rem;
+}

@@ -8,15 +8,24 @@
 
 <%-- The markup and script in the following Content element will be placed in the <head> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
-    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  
     <SharePoint:ScriptLink name="sp.js" runat="server" OnDemand="true" LoadAfterUI="true" Localizable="false" />
     <meta name="WebPartPageExpansion" content="full" />
 
     <!-- Add your CSS styles to the following file -->
+    
+    <link rel="stylesheet" type="text/css" href="../Content/bootstrap.min.css">
     <link rel="Stylesheet" type="text/css" href="../Content/App.css" />
 
     <!-- Add your JavaScript to the following file -->
     <script type="text/javascript" src="../Scripts/App.js"></script>
+    <script type="text/javascript" src="../Scripts/angular.min.js"></script>
+    <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap.js"> </script>
+
+    <script>
+        angular.module('myModule', ['ui.bootstrap']);
+    </script>
+
 </asp:Content>
 
 <%-- The markup in the following Content element will be placed in the TitleArea of the page --%>
@@ -28,10 +37,61 @@
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
 
     <div>
+        <div class="menu-panel">
+            <div class="menu-panel-group">
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
+                </div>
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-copy"></span> Copy </button>
+                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-scissors"></span> Cut </button>
+                </div>
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-plus big"></span>Add folder</button>
+                </div>
+            </div>
+            <div class="menu-panel-group">
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Lock </button>
+                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Unlock </button>
+                </div>
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-retweet big"></span><br>Discard<br>checkout </button>
+                </div>
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-list-alt big"></span><br>Edit<br>metadata </button>
+                </div>
+                <div class="menu-btn-group">
+                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-user big"></span><br>Permissions </button>
+                </div>
+            </div>
+            <div class="menu-panel-group">
+                <div class="menu-btn-group">
+                   
+                </div>
+        </div>
+            </div>
         <p id="message">
             <!-- The following content will be replaced with the user name when you run the app - see App.js -->
             initializing...
         </p>
     </div>
-
+ <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Действие <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="#">Действие</a>
+                            </li>
+                            <li>
+                                <a href="#">Другое действие</a>
+                            </li>
+                            <li>
+                                <a href="#">Что-то иное</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="#">Отдельная ссылка</a>
+                            </li>
+                        </ul>
+                    </div>
 </asp:Content>
