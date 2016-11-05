@@ -15,16 +15,61 @@
     <!-- Add your CSS styles to the following file -->
     
     <link rel="stylesheet" type="text/css" href="../Content/bootstrap.min.css">
+    <link rel ="stylesheet" type="text/css" href="../Content/ui-bootstrap-csp.css">
     <link rel="Stylesheet" type="text/css" href="../Content/App.css" />
 
     <!-- Add your JavaScript to the following file -->
     <script type="text/javascript" src="../Scripts/App.js"></script>
     <script type="text/javascript" src="../Scripts/angular.min.js"></script>
+    <script type="text/javascript" src="../Scripts/angular-animate.js"></script>
+    <script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>
+    <script type="text/javascript" src="../Scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap.js"> </script>
+    <script type="text/javascript" src ="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>
 
     <script>
-        angular.module('myModule', ['ui.bootstrap']);
+        angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
+        angular.module('Abs').controller('DropdownCtrl', function ($scope, $log) {
+            $scope.items = [
+              'The first choice!',
+              'And another choice for you.',
+              'but wait! A third!'
+            ];
+
+            $scope.status = {
+                isopen: false
+            };
+
+            $scope.toggled = function (open) {
+                $log.log('Dropdown is now: ', open);
+            };
+
+            $scope.toggleDropdown = function ($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.status.isopen = !$scope.status.isopen;
+            };
+
+            $scope.appendToEl = angular.element(document.querySelector('#dropdown-long-content'));
+        });
+        angular.module('Abs').controller('TabsDemoCtrl', function ($scope, $window) {
+            $scope.tabs = [
+              { title: 'Dynamic Title 1', content: 'Dynamic content 1' },
+              { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: true }
+            ];
+
+            $scope.alertMe = function () {
+                setTimeout(function () {
+                    $window.alert('You\'ve selected the alert tab!');
+                });
+            };
+
+            $scope.model = {
+                name: 'Tabs'
+            };
+        });
     </script>
+
 
 </asp:Content>
 
@@ -35,7 +80,7 @@
 
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
-
+    <html lang="en" ng-app="Abs">
     <div>
         <div class="menu-panel">
             <div class="menu-panel-group">
@@ -66,32 +111,57 @@
                 </div>
             </div>
             <div class="menu-panel-group">
-                <div class="menu-btn-group">
-                   
-                </div>
-        </div>
-            </div>
-        <p id="message">
-            <!-- The following content will be replaced with the user name when you run the app - see App.js -->
-            initializing...
-        </p>
-    </div>
- <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Действие <span class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="#">Действие</a>
+                <div class="menu-btn-group" ng-controller="DropdownCtrl">
+                    <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                        <button id="btn-dload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
+                            Download <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload">
+                            <li role="menuitem">
+                                <a href="#">Download</a>
                             </li>
-                            <li>
-                                <a href="#">Другое действие</a>
+                            <li role="menuitem">
+                                <a href="#">Archive</a>
+                            </li>                           
+                        </ul>
+                    </div>
+                    <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                        <button id="btn-upload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
+                            Upload <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-upload">
+                            <li role="menuitem">
+                                <a href="#">File</a>
                             </li>
-                            <li>
-                                <a href="#">Что-то иное</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="#">Отдельная ссылка</a>
+                            <li role="menuitem">
+                                <a href="#">Folder</a>
                             </li>
                         </ul>
                     </div>
+                </div> 
+            </div>
+        </div>
+        <div>
+            <div style="float: left">
+                For Tree View
+            </div>
+            <div ng-controller="TabsDemoCtrl" style="float: left">             
+               <uib-tabset active="active">
+                    <uib-tab index="0" heading="Static title">Static content</uib-tab>
+                    <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
+                        {{tab.content}}
+                    </uib-tab>
+                    <uib-tab index="3" select="alertMe()">
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-bell"></i> Alert!
+                        </uib-tab-heading>
+                        I've got an HTML heading, and a select callback. Pretty cool!
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+       </div>
+    </div>
+    
+
+    </html>
 </asp:Content>
