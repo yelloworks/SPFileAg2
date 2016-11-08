@@ -55,6 +55,7 @@
     <None Include="Pages\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{92bf6678-02cb-4098-a148-2f4b4f70b4c4}</SharePointProjectItemId>
     </None>
+    <Content Include="Content\angular-tree-widget.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -104,6 +105,7 @@
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-parse-ext.js" />
     <Content Include="Scripts\angular-parse-ext.min.js" />
+    <Content Include="Scripts\angular-recursion.js" />
     <Content Include="Scripts\angular-resource.js" />
     <Content Include="Scripts\angular-resource.min.js" />
     <Content Include="Scripts\angular-route.js" />
@@ -113,6 +115,8 @@
     <Content Include="Scripts\angular-scenario.js" />
     <Content Include="Scripts\angular-touch.js" />
     <Content Include="Scripts\angular-touch.min.js" />
+    <Content Include="Scripts\angular-tree-widget.js" />
+    <Content Include="Scripts\angular-tree-widget.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
@@ -121,6 +125,7 @@
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\controllers\controller.js" />
     <Content Include="Scripts\Elements.xml" />
     <Content Include="Scripts\App.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
@@ -867,6 +872,11 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
+    <Content Include="Scripts\img\arrow-down.png" />
+    <Content Include="Scripts\img\arrow-right.png" />
+    <Content Include="Scripts\img\file.png" />
+    <Content Include="Scripts\img\folder-closed.png" />
+    <Content Include="Scripts\img\folder-open.png" />
     <Content Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />

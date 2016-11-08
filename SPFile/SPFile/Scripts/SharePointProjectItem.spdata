@@ -801,5 +801,14 @@
     <ProjectItemFile Source="angular-animate.min.js.map" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="angular-animate.min.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="angular-animate.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="angular-tree-widget.min.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="img\arrow-right.png" Target="Scripts\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\file.png" Target="Scripts\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\folder-closed.png" Target="Scripts\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\folder-open.png" Target="Scripts\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\arrow-down.png" Target="Scripts\img\" Type="ElementFile" />
+    <ProjectItemFile Source="controllers\controller.js" Target="Scripts\controllers\" Type="ElementFile" />
+    <ProjectItemFile Source="angular-recursion.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="angular-tree-widget.js" Target="Scripts\" Type="ElementFile" />
   </Files>
 </ProjectItem>

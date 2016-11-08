@@ -12,5 +12,6 @@
     <ProjectItemFile Source="bootstrap-theme.css.map" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="bootstrap-theme.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="ui-bootstrap-csp.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="angular-tree-widget.min.css" Target="Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>

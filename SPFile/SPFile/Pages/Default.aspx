@@ -8,7 +8,7 @@
 
 <%-- The markup and script in the following Content element will be placed in the <head> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
-    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  
+<%--    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  --%>
     <SharePoint:ScriptLink name="sp.js" runat="server" OnDemand="true" LoadAfterUI="true" Localizable="false" />
     <meta name="WebPartPageExpansion" content="full" />
 
@@ -16,19 +16,26 @@
     
     <link rel="stylesheet" type="text/css" href="../Content/bootstrap.min.css">
     <link rel ="stylesheet" type="text/css" href="../Content/ui-bootstrap-csp.css">
+    <link rel = "stylesheet" type = "text/css" href="../Content/angular-tree-widget.min.css">
     <link rel="Stylesheet" type="text/css" href="../Content/App.css" />
 
     <!-- Add your JavaScript to the following file -->
-    <script type="text/javascript" src="../Scripts/App.js"></script>
-    <script type="text/javascript" src="../Scripts/angular.min.js"></script>
+    
+    <script type="text/javascript" src="../Scripts/angular.js"></script>
     <script type="text/javascript" src="../Scripts/angular-animate.js"></script>
+    <script type="text/javascript" src="../Scripts/angular-recursion.js"> </script>
     <script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>
     <script type="text/javascript" src="../Scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap.js"> </script>
-    <script type="text/javascript" src ="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>
+    <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>   
+   
+    <script type="text/javascript" src="../Scripts/angular-tree-widget.js"> </script>
+    <script type="text/javascript" src="../Scripts/App.js"></script>
+    <script type="text/javascript" src ="../Scripts/controllers/controller.js"> </script>
+    
 
     <script>
-        angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
+
         angular.module('Abs').controller('DropdownCtrl', function ($scope, $log) {
             $scope.items = [
               'The first choice!',
@@ -82,7 +89,7 @@
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
     <html lang="en" ng-app="Abs">
     <div>
-        <div class="menu-panel">
+        <div class="col-ms-12 menu-panel">
             <div class="menu-panel-group">
                 <div class="menu-btn-group">
                     <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
@@ -142,10 +149,16 @@
             </div>
         </div>
         <div>
-            <div style="float: left">
-                For Tree View
-            </div>
-            <div ng-controller="TabsDemoCtrl" style="float: left">             
+<%--            <div ng-app="treeApp">
+                <div class="col-sm-4" ng-controller="TreeController">
+
+                        <div class="tree-container">
+                            <tree nodes='treeNodes' options='options'></tree>
+                        </div>
+
+                </div>
+            </div>--%>
+            <div class = "col-sm-8" ng-controller="TabsDemoCtrl">             
                <uib-tabset active="active">
                     <uib-tab index="0" heading="Static title">Static content</uib-tab>
                     <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
@@ -161,7 +174,18 @@
             </div>
        </div>
     </div>
+    </html>
+    <div ng-app="treeApp">
+    <div ng-controller="TreeController">
+
+        <div class="col-sm-6 col-md-4">
+            <div class="tree-container">
+                <tree nodes='treeNodes' options='options'></tree>
+            </div>
+        </div>
+    </div>
+</div>
+    
     
 
-    </html>
 </asp:Content>
