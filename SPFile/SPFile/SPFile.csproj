@@ -60,6 +60,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\img\arrow-down.png" />
+    <Content Include="Content\img\arrow-right.png" />
+    <Content Include="Content\img\file.png" />
+    <Content Include="Content\img\folder-closed.png" />
+    <Content Include="Content\img\folder-open.png" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Elements.xml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -872,11 +877,6 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
-    <Content Include="Scripts\img\arrow-down.png" />
-    <Content Include="Scripts\img\arrow-right.png" />
-    <Content Include="Scripts\img\file.png" />
-    <Content Include="Scripts\img\folder-closed.png" />
-    <Content Include="Scripts\img\folder-open.png" />
     <Content Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />

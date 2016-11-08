@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 var treeApp = angular.module('treeApp', ['TreeWidget']);
-angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
+angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget']);
 
 ExecuteOrDelayUntilScriptLoaded(initializePage, "sp.js");
 

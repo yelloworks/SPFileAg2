@@ -13,5 +13,10 @@
     <ProjectItemFile Source="bootstrap-theme.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="ui-bootstrap-csp.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="angular-tree-widget.min.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="img\file.png" Target="Content\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\folder-closed.png" Target="Content\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\folder-open.png" Target="Content\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\arrow-down.png" Target="Content\img\" Type="ElementFile" />
+    <ProjectItemFile Source="img\arrow-right.png" Target="Content\img\" Type="ElementFile" />
   </Files>
 </ProjectItem>

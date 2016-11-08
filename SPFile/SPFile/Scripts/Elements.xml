@@ -800,11 +800,6 @@
     <File Path="Scripts\angular-animate.min.js" Url="Scripts/angular-animate.min.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-animate.js" Url="Scripts/angular-animate.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-tree-widget.min.js" Url="Scripts/angular-tree-widget.min.js" ReplaceContent="TRUE" />
-    <File Path="Scripts\img\arrow-right.png" Url="Scripts/img/arrow-right.png" ReplaceContent="TRUE" />
-    <File Path="Scripts\img\file.png" Url="Scripts/img/file.png" ReplaceContent="TRUE" />
-    <File Path="Scripts\img\folder-closed.png" Url="Scripts/img/folder-closed.png" ReplaceContent="TRUE" />
-    <File Path="Scripts\img\folder-open.png" Url="Scripts/img/folder-open.png" ReplaceContent="TRUE" />
-    <File Path="Scripts\img\arrow-down.png" Url="Scripts/img/arrow-down.png" ReplaceContent="TRUE" />
     <File Path="Scripts\controllers\controller.js" Url="Scripts/controllers/controller.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-recursion.js" Url="Scripts/angular-recursion.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-tree-widget.js" Url="Scripts/angular-tree-widget.js" ReplaceContent="TRUE" />

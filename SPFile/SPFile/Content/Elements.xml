@@ -12,5 +12,10 @@
     <File Path="Content\bootstrap-theme.css" Url="Content/bootstrap-theme.css" ReplaceContent="TRUE" />
     <File Path="Content\ui-bootstrap-csp.css" Url="Content/ui-bootstrap-csp.css" ReplaceContent="TRUE" />
     <File Path="Content\angular-tree-widget.min.css" Url="Content/angular-tree-widget.min.css" ReplaceContent="TRUE" />
+    <File Path="Content\img\file.png" Url="Content/img/file.png" ReplaceContent="TRUE" />
+    <File Path="Content\img\folder-closed.png" Url="Content/img/folder-closed.png" ReplaceContent="TRUE" />
+    <File Path="Content\img\folder-open.png" Url="Content/img/folder-open.png" ReplaceContent="TRUE" />
+    <File Path="Content\img\arrow-down.png" Url="Content/img/arrow-down.png" ReplaceContent="TRUE" />
+    <File Path="Content\img\arrow-right.png" Url="Content/img/arrow-right.png" ReplaceContent="TRUE" />
   </Module>
 </Elements>

@@ -149,15 +149,18 @@
             </div>
         </div>
         <div>
-<%--            <div ng-app="treeApp">
-                <div class="col-sm-4" ng-controller="TreeController">
+            <%-- TreeView --%>
+            <div ng-app="treeApp">
+                <div ng-controller="TreeController">
 
+                    <div class="col-sm-4">
                         <div class="tree-container">
                             <tree nodes='treeNodes' options='options'></tree>
                         </div>
-
+                    </div>
                 </div>
-            </div>--%>
+            </div>
+            <%-- Tabs --%>
             <div class = "col-sm-8" ng-controller="TabsDemoCtrl">             
                <uib-tabset active="active">
                     <uib-tab index="0" heading="Static title">Static content</uib-tab>
@@ -174,18 +177,9 @@
             </div>
        </div>
     </div>
-    </html>
-    <div ng-app="treeApp">
-    <div ng-controller="TreeController">
+  
+        
 
-        <div class="col-sm-6 col-md-4">
-            <div class="tree-container">
-                <tree nodes='treeNodes' options='options'></tree>
-            </div>
-        </div>
-    </div>
-</div>
-    
-    
+  </html>  
 
 </asp:Content>
