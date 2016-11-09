@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <CustomAction Id="1ecd4af2-58f7-402a-bf86-a23c448aec50.RibbonButton"
+                RegistrationType="List"
+                RegistrationId="{$ListId:Shared%20Documents;}"
+                Location="CommandUI.Ribbon"
+                Sequence="10001"
+                Title="Invoke &apos;RibbonButton&apos; action">
+    <CommandUIExtension>
+      <!-- 
+      Update the UI definitions below with the controls and the command actions
+      that you want to enable for the custom action.
+      -->
+      <CommandUIDefinitions>
+        <CommandUIDefinition Location="Ribbon.Library.CustomizeLibrary.Controls._children">
+          <Button Id="Ribbon.Library.CustomizeLibrary.RibbonButtonButton"
+                  Alt="SPFile"
+                  Sequence="100"
+                  Command="Invoke_RibbonButtonButtonRequest"
+                  LabelText="SPFile"
+                  TemplateAlias="o1"
+                  Image32by32="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEeklEQVRYhbWXz6sbVRTHv+fOj8y8mddM8sgrj2pb0tCAWgtFqIiI4j8g7qwLpRsXLgSxirqzUkUL2uKiIuiuduFGq9hFQVypLagLxfI0xpRomwm8l3lvJgnJzD0uMgkxbyY/XvHAZWa4d875nO+9d84dQopZlkUHDhw4qqrqm0T0KIAlAJQ2fooxAJ+Zr4Zh+HqtVrsRBAEPOxMdqqqKcrn8kKIoVwBYE84WtfEYXhRFj6+vr//U7/cHsZLecBwHiqJcAGACuNbr9V71ff/2LoIDAGzbvkvX9bMAjiiK8kE+n3+40WjwJN3IlpeXxfLych4AMfO267o9KeWs7Jk5eYiiKFQsFsumaf4KQHqed7BWq/0NJCiQy+VoZWXlYCaTeQyADQD5fH5WkjKKouubm5s/uK67AySKIvY8b900zQ4AA0ABwE6AtbU1USgU3gbwAgAFA4VmZU5xlrx3795PDcM4efPmzf4khJQy8eURgGVZVCgUTgF4MXb6S0w5D0ARwGEAJ7LZrLF///4TSRBTAfbs2aMBOBU7PN1sNt9otVqp8zqKTkTFYvFlRVHOEBEx85PZbPbivBAjAEVRSgAcAJHnee/cunUrWbNk47gJIsIiEGLsXo+vvW63210weHfsnoiIAAwhtMHjbIBdW7fb/RpAL850EuKj1dXVVIKpAEQEIQRNaQCARqPxu5TyJIBNZpZxG+r+tOM496fFSPwSAoCmaSiVSkc0TTuBwZbcYcx8o9FofOK6LlcqlUu5XO4LTdPuAaCoqkqWZV0AcJ+qqscw2FXzA5imSZqmfQjg+JQ5lLZt/+y67o+dToc7nU4A4DoAWJYlDh061IrHpSqdChCGIZj5ChEdZeZEBQD8FkXRnyl9PHFdDKDdbnOtVjut6/pppNQMZmbP83ZTIWcDAMDW1tZcWfxvAIVCgTKZTA4pizDBOIqiDdd15/6IpQLYtk1ra2vvA3h+XmexfSelfMT3/TsDiPf40fhxkaPYvUIIDUD/jgCCIOAgCJ4xDOOJaeMmjMMw/NbzvB5N+/7OAxBFESqVSg3AOcyvwGixWpY1bdxsAGAwDYqiLCI/MTOHYbizI0WQVABd11EqlR5UVfXkLNAxYynllXq9/tnw1Ds00zQNjFXcmQCGYZCqqucAPDDndIKZIYR4amlp6XPP84YEJIQQjuO8gsF23gjD8I+ZAP1+n6WUF4UQ+5h5bgUAfNWfSJ+I3gKQi/vfHYNLB+h0OqhWq+d1XT+PBRahlBKe57FlWcN3KA7eB/Bes9k86/v+aLEmAgzrfLwVh5ktZEMfGJSMj4MgOLOxsfFXq9X6j6/xMtmMr6bjOIdVVd3NfyCAwYpfWVkxMTgpIwzDL6vVanUyODCmQLfb/QfANQDHNU27VC6XX/J9v74bAMMwsplM5jUAqwA22+32N2kH01GWQgiUy+VjmqZdBZAdG7Oo/OPKhcz8bKVSudRutxP9jKocM8P3/du2bV9WVXUfEd1NRBkiEgs2EFEfwPdRFD1Xr9cvb29vpybxLwfd7Z4r7ZXjAAAAAElFTkSuQmCC"
+                  Image16by16="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACNUlEQVQ4jX2QP2gTYRjGn+/yXe76XY7rJabtQWLpDboILqIUCgri4FywdKmbiugigoM4CS0Ogm5OUiqCi5Pi4KTg6BJwbFJykhQhJlz+3J98d/e55PSaxr7Ty8v7/t7neQgmRQiBbdsbmqa9AFDG/ysWQnxyHGfLdd0BTaeKohAAZ3u93la/369lL4QQIu0ppYplWa/L5fJd13WfUQDI5/OkUqncUVX1wtzc3CXDMEQWwDn/2mw2nwdBkAAghmF8kWX5NABCAcCyrE3G2APXdXc452HWlqqqZzRN27Fte6XRaNwLgiArCBQAyefzq57n7TmOsyuESDLPycLCwqqmaY8ppbdt28bBwcH9rLo0AylJkhiAIISQ7ILneTUhRI0Qcp5SeqtardY552QagImVtVKp9BSANBmNms3mjf39/YuKoljFYnGDMbbGOf8+ExAEwc/BYPA5C+Cce77vx77vtwqFwm/GWPbkKGA4HDpRFL0EkEoUsiyrsiyLMAyDaXvHAIuLi+vz8/Nvp5cmWTwcj8eDEwHdbvdjGIZXMgrSEp7n/TBNc/1EgCRJCqX0FP5l8BdAKVUnPcnlcjkAyTGAYRiXTdPcnQFIVFV9xDnnhJAVxti5fr//BIA4Ajg8PPzQ6XSKMywgjmMsLS3dBFAcjUbb7Xb7XapAxHHsMMaumqa5F0VROH08sUd1Xb8WRdH7er3+CoBA+knXdX15efmNJEnXAeRmAQAkQohvrVZrs9vt/kqHfwDHb+Jc9qqK4AAAAABJRU5ErkJggg==" />
+        </CommandUIDefinition>
+      </CommandUIDefinitions>
+      <CommandUIHandlers>
+        <CommandUIHandler Command="Invoke_RibbonButtonButtonRequest"
+                          CommandAction="~appWebUrl/Pages/Default.aspx?{StandardTokens}&amp;SPListItemId={SelectedItemId}&amp;SPListId={SelectedListId}"/>
+      </CommandUIHandlers>
+    </CommandUIExtension >
+  </CustomAction>
+</Elements>
