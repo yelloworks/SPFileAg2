@@ -36,45 +36,56 @@
 
     <script>
 
-        angular.module('Abs').controller('DropdownCtrl', function ($scope, $log) {
-            $scope.items = [
-              'The first choice!',
-              'And another choice for you.',
-              'but wait! A third!'
-            ];
 
-            $scope.status = {
-                isopen: false
-            };
+        function documentQuery() {
+            var ListId = GetUrlKeyValue("SPListId");
+            var HostUrl = GetUrlKeyValue("SPHostUrl");
+            //var contextToken = 
+            //TokenHelper.GetContextTokenFromRequest(Page.Request);
 
-            $scope.toggled = function (open) {
-                $log.log('Dropdown is now: ', open);
-            };
 
-            $scope.toggleDropdown = function ($event) {
-                $event.preventDefault();
-                $event.stopPropagation();
-                $scope.status.isopen = !$scope.status.isopen;
-            };
+            var url;
+            var ctx;
+            var oLibDocs;
 
-            $scope.appendToEl = angular.element(document.querySelector('#dropdown-long-content'));
-        });
-        angular.module('Abs').controller('TabsDemoCtrl', function ($scope, $window) {
-            $scope.tabs = [
-              { title: 'Dynamic Title 1', content: 'Dynamic content 1' },
-              { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: true }
-            ];
 
-            $scope.alertMe = function () {
-                setTimeout(function () {
-                    $window.alert('You\'ve selected the alert tab!');
-                });
-            };
+            if (ListId != "") {
+                //Temp variant
+                url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
+                //;
+                ctx = new SP.ClientContext(url);
+                oLibDocs = ctx.get_web().get_lists().getById(ListId);
+            } else {
+                url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
+                ctx = new SP.ClientContext(url);
+                oLibDocs = ctx.get_web().get_lists().getByTitle("tmp2");
+            }
 
-            $scope.model = {
-                name: 'Tabs'
-            };
-        });
+
+            var caml = SP.CamlQuery.createAllItemsQuery();
+            caml.set_viewXml("<View Scope='All'><Query></Query></View>");
+            this.allDocumentsCol = oLibDocs.getItems(caml);
+            ctx.load(this.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
+            ctx.executeQueryAsync(Function.createDelegate(this, this.onSucceededCallback), Function.createDelegate(this, this.onFailedCallback));
+        }
+
+        function onSucceededCallback(sender, args) {
+            var libList = "";
+            var ListEnumerator = this.allDocumentsCol.getEnumerator();
+
+            while (ListEnumerator.moveNext()) {
+                var currentItem = ListEnumerator.get_current();
+                var currentItemURL = _spPageContextInfo.webServerRelativeUrl + currentItem.get_item('ServerUrl');
+                var currentItemType = currentItem.get_item('FSObjType');
+                libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
+            }
+            alert(libList);
+        }
+
+        function onFailedCallback(sender, args) {
+            alert("failed. Message:" + args.get_message());
+
+        }
     </script>
 
 
@@ -87,6 +98,7 @@
 
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
+    <input type="button" value="Button 3" onclick="documentQuery();"/>
     <html lang="en" ng-app="Abs">
     <div>
         <div class="col-ms-12 menu-panel">
