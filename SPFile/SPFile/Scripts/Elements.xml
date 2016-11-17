@@ -803,5 +803,6 @@
     <File Path="Scripts\controllers\controller.js" Url="Scripts/controllers/controller.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-recursion.js" Url="Scripts/angular-recursion.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-tree-widget.js" Url="Scripts/angular-tree-widget.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\context.js" Url="Scripts/context.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>

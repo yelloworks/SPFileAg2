@@ -8,7 +8,7 @@
 
 <%-- The markup and script in the following Content element will be placed in the <head> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
-<%--    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  --%>
+    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  
     <SharePoint:ScriptLink name="sp.js" runat="server" OnDemand="true" LoadAfterUI="true" Localizable="false" />
     <meta name="WebPartPageExpansion" content="full" />
 
@@ -32,60 +32,11 @@
     <script type="text/javascript" src="../Scripts/angular-tree-widget.js"> </script>
     <script type="text/javascript" src="../Scripts/App.js"></script>
     <script type="text/javascript" src ="../Scripts/controllers/controller.js"> </script>
+    <script type ="text/javascript" src ="../Scripts/context.js"></script>
     
 
     <script>
 
-
-        function documentQuery() {
-            var ListId = GetUrlKeyValue("SPListId");
-            var HostUrl = GetUrlKeyValue("SPHostUrl");
-            //var contextToken = 
-            //TokenHelper.GetContextTokenFromRequest(Page.Request);
-
-
-            var url;
-            var ctx;
-            var oLibDocs;
-
-
-            if (ListId != "") {
-                //Temp variant
-                url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
-                //;
-                ctx = new SP.ClientContext(url);
-                oLibDocs = ctx.get_web().get_lists().getById(ListId);
-            } else {
-                url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
-                ctx = new SP.ClientContext(url);
-                oLibDocs = ctx.get_web().get_lists().getByTitle("tmp2");
-            }
-
-
-            var caml = SP.CamlQuery.createAllItemsQuery();
-            caml.set_viewXml("<View Scope='All'><Query></Query></View>");
-            this.allDocumentsCol = oLibDocs.getItems(caml);
-            ctx.load(this.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
-            ctx.executeQueryAsync(Function.createDelegate(this, this.onSucceededCallback), Function.createDelegate(this, this.onFailedCallback));
-        }
-
-        function onSucceededCallback(sender, args) {
-            var libList = "";
-            var ListEnumerator = this.allDocumentsCol.getEnumerator();
-
-            while (ListEnumerator.moveNext()) {
-                var currentItem = ListEnumerator.get_current();
-                var currentItemURL = _spPageContextInfo.webServerRelativeUrl + currentItem.get_item('ServerUrl');
-                var currentItemType = currentItem.get_item('FSObjType');
-                libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
-            }
-            alert(libList);
-        }
-
-        function onFailedCallback(sender, args) {
-            alert("failed. Message:" + args.get_message());
-
-        }
     </script>
 
 
