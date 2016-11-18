@@ -806,5 +806,6 @@
     <ProjectItemFile Source="angular-recursion.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="angular-tree-widget.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="context.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="ui-grid.js" Target="Scripts\" Type="ElementFile" />
   </Files>
 </ProjectItem>

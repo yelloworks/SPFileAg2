@@ -14,10 +14,11 @@
 
     <!-- Add your CSS styles to the following file -->
     
-    <link rel="stylesheet" type="text/css" href="../Content/bootstrap.min.css">
+    <link rel ="stylesheet" type="text/css" href="../Content/bootstrap.min.css">
     <link rel ="stylesheet" type="text/css" href="../Content/ui-bootstrap-csp.css">
-    <link rel = "stylesheet" type = "text/css" href="../Content/angular-tree-widget.min.css">
-    <link rel="Stylesheet" type="text/css" href="../Content/App.css" />
+    <link rel ="stylesheet" type = "text/css" href="../Content/angular-tree-widget.min.css">
+    <link rel ="stylesheet" type="text/css"href="../Content/ui-grid.css">
+    <link rel ="Stylesheet" type="text/css" href="../Content/App.css" />
 
     <!-- Add your JavaScript to the following file -->
     
@@ -25,9 +26,11 @@
     <script type="text/javascript" src="../Scripts/angular-animate.js"></script>
     <script type="text/javascript" src="../Scripts/angular-recursion.js"> </script>
     <script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>
+    <script type="text/javascript" src="../Scripts/angular-touch.js"></script>
     <script type="text/javascript" src="../Scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap.js"> </script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>   
+    <script type ="text/javascript" src="../Scripts/ui-grid.js"></script>
    
     <script type="text/javascript" src="../Scripts/angular-tree-widget.js"> </script>
     <script type="text/javascript" src="../Scripts/App.js"></script>
@@ -35,10 +38,15 @@
     <script type ="text/javascript" src ="../Scripts/context.js"></script>
     
 
+    <style>
+        .grid {
+      width: 500px;
+      height: 250px;
+    }
+    </style>
     <script>
-
+       
     </script>
-
 
 </asp:Content>
 
@@ -49,9 +57,17 @@
 
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
-    <input type="button" value="Button 3" onclick="documentQuery();"/>
-    <html lang="en" ng-app="Abs">
-    <div>
+    <input type="button" value="Button 3" onclick="documentQuery();"/>      
+       
+    <html lang="en" ng-app="Abs" >
+<%--    <div ng-app="app">
+        
+            <div ng-controller="MainCtrl">
+                <button type="button" id="reset" class="btn btn-success" ng-click="reset()">Reset</button>
+                <div id="grid1" ui-grid="{ data: myData }" class="grid"></div>
+            </div>
+        </div>--%>
+    <div>             
         <div class="col-ms-12 menu-panel">
             <div class="menu-panel-group">
                 <div class="menu-btn-group">
@@ -112,8 +128,8 @@
             </div>
         </div>
         <div>
-            <%-- TreeView --%>
-            <div ng-app="treeApp">
+            
+
                 <div ng-controller="TreeController">
 
                     <div class="col-sm-4">
@@ -122,11 +138,24 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <%-- Tabs --%>
+
+           
             <div class = "col-sm-8" ng-controller="TabsDemoCtrl">             
                <uib-tabset active="active">
-                    <uib-tab index="0" heading="Static title">Static content</uib-tab>
+                   <uib-tab index="0" heading="Static title">
+                       <div ng-controller="MainCtrl">
+                           <button type="button" id="swapData" class="btn btn-success" ng-click="swapData()">Swap Data</button>
+                           <button type="button" id="addData" class="btn btn-success" ng-click="addData()">Add Data</button>
+                           <button type="button" id="removeFirstRow" class="btn btn-success" ng-click="removeFirstRow()">Remove First Row</button>
+                           <button type="button" id="reset" class="btn btn-success" ng-click="reset()">Reset</button>
+                           <button type="button" id="try" class="btn btn-success" ng-click="getDir()">Try</button>
+                           <br>
+                           <br>
+                           <div id="grid1" ui-grid="gridOpts" class="grid"></div>
+<%--                           
+                           <div id="grid1" ui-grid="gridOpts" class="grid"></div>--%>
+                       </div>
+                   </uib-tab>
                     <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
                         {{tab.content}}
                     </uib-tab>
@@ -139,10 +168,13 @@
                 </uib-tabset>
             </div>
        </div>
+ 
     </div>
   
-        
 
-  </html>  
+
+
+
+  </html>   
 
 </asp:Content>

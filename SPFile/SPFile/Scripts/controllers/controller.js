@@ -142,3 +142,192 @@ angular.module('Abs').controller('TabsDemoCtrl', function ($scope, $window) {
         name: 'Tabs'
     };
 });
+
+angular.module('Abs').controller('MainCtrl', ['$scope', function ($scope) {
+
+
+
+    $scope.swapData = function () {
+        if ($scope.gridOpts.data === data1) {
+            $scope.gridOpts.data = data2;
+            $scope.gridOpts.columnDefs = columnDefs2;
+        }
+        else {
+            $scope.gridOpts.data = data1;
+            $scope.gridOpts.columnDefs = columnDefs1;
+        }
+    };
+
+    $scope.addData = function () {
+        var n = $scope.gridOpts.data.length + 1;
+        $scope.gridOpts.data.push({
+            "Name": "New " + n,
+            "Path": "Person " + n,
+            "Type": "abc"
+        });
+    };
+
+    $scope.removeFirstRow = function () {
+        //if($scope.gridOpts.data.length > 0){
+        $scope.gridOpts.data.splice(0, 1);
+        //}
+    };
+
+    $scope.reset = function () {
+        data1 = angular.copy(origdata1);
+        data2 = angular.copy(origdata2);
+
+        $scope.gridOpts.data = data1;
+        $scope.gridOpts.columnDefs = columnDefs1;
+    }
+
+    var columnDefs1 = [
+        { name: 'Name' },
+        { name: 'Type' },
+        { name: 'Path' },
+
+    ];
+
+    var data1 = [
+      
+    ];
+
+    var origdata1 = angular.copy(data1);
+
+    var columnDefs2 = [
+      { name: 'firstName' },
+      { name: 'lastName' },
+      { name: 'company' },
+      { name: 'employed' }
+    ];
+
+    var data2 = [
+      {
+          "firstName": "Waters",
+          "lastName": "Shepherd",
+          "company": "Kongene",
+          "employed": true
+      },
+      {
+          "firstName": "Hopper",
+          "lastName": "Zamora",
+          "company": "Acium",
+          "employed": true
+      },
+      {
+          "firstName": "Marcy",
+          "lastName": "Mclean",
+          "company": "Zomboid",
+          "employed": true
+      },
+      {
+          "firstName": "Tania",
+          "lastName": "Cruz",
+          "company": "Marqet",
+          "employed": true
+      },
+      {
+          "firstName": "Kramer",
+          "lastName": "Cline",
+          "company": "Parleynet",
+          "employed": false
+      },
+      {
+          "firstName": "Bond",
+          "lastName": "Pickett",
+          "company": "Brainquil",
+          "employed": false
+      }
+    ];
+
+    var origdata2 = angular.copy(data2);
+
+    $scope.gridOpts = {
+        columnDefs: columnDefs1,
+        data: data1
+    };
+
+
+
+
+
+
+
+
+
+
+  //  var myData = [
+
+  //  ];
+  //  var dirFormation;
+
+
+    $scope.getDir = function documentQuery() {
+        var ListId = GetUrlKeyValue("SPListId");
+        var HostUrl = GetUrlKeyValue("SPHostUrl");
+        //var contextToken = 
+        //TokenHelper.GetContextTokenFromRequest(Page.Request);
+        var url;
+        var ctx;
+        var oLibDocs;
+        if (ListId != "") {
+            //Temp variant
+            url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
+            //;
+            ctx = new SP.ClientContext(url);
+            oLibDocs = ctx.get_web().get_lists().getById(ListId);
+        } else {
+            url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
+            ctx = new SP.ClientContext(url);
+            oLibDocs = ctx.get_web().get_lists().getByTitle("tmp2");
+        }
+        var caml = SP.CamlQuery.createAllItemsQuery();
+        caml.set_viewXml("<View Scope='All'><Query></Query></View>");
+        $scope.allDocumentsCol = oLibDocs.getItems(caml);
+        ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
+        ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
+            Function.createDelegate($scope, $scope.failed));
+    }
+
+
+    $scope.succeeded = function onSucceededCallback(sender, args) {
+        var libList = "";
+        var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
+        while (ListEnumerator.moveNext()) {
+            var currentItem = ListEnumerator.get_current();
+            var currentItemURL = _spPageContextInfo.webServerRelativeUrl + currentItem.get_item('ServerUrl');
+            var currentItemType = currentItem.get_item('FSObjType');
+            libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
+            $scope.gridOpts.data.push(
+            {
+                "Name" : currentItem.get_item('FileLeafRef'),
+                "Type" : currentItemType,
+                "Path" : currentItemURL
+        });
+        }
+        $scope.$apply();
+        //alert(libList);
+    }
+
+    $scope.failed = function onFailedCallback(sender, args) {
+        alert("failed. Message:" + args.get_message());
+     
+    }
+
+
+
+  //  var columnDefs = [
+  //{ name: 'Name' },
+  //{ name: 'Type' },
+  //{ name: 'Path' },
+
+  //  ];
+
+
+  //  $scope.gridOpts = {
+  //      columnDefs: columnDefs,
+  //      data: myData
+    //  };
+
+
+}]);

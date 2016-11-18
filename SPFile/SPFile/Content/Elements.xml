@@ -17,5 +17,6 @@
     <File Path="Content\img\folder-open.png" Url="Content/img/folder-open.png" ReplaceContent="TRUE" />
     <File Path="Content\img\arrow-down.png" Url="Content/img/arrow-down.png" ReplaceContent="TRUE" />
     <File Path="Content\img\arrow-right.png" Url="Content/img/arrow-right.png" ReplaceContent="TRUE" />
+    <File Path="Content\ui-grid.css" Url="Content/ui-grid.css" ReplaceContent="TRUE" />
   </Module>
 </Elements>
