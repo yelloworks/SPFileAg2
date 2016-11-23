@@ -146,40 +146,27 @@ angular.module('Abs').controller('TabsDemoCtrl', function ($scope, $window) {
 angular.module('Abs').controller('MainCtrl', ['$scope', function ($scope) {
 
 
+    $scope.onstart = function () {
 
-    $scope.swapData = function () {
-        if ($scope.gridOpts.data === data1) {
-            $scope.gridOpts.data = data2;
-            $scope.gridOpts.columnDefs = columnDefs2;
-        }
-        else {
-            $scope.gridOpts.data = data1;
-            $scope.gridOpts.columnDefs = columnDefs1;
-        }
+        SP.SOD.executeFunc('SP.Runtime.js',
+            'SP.ClientContext',
+            function() {
+                SP.SOD.executeFunc('SP.js',
+                    'SP.ClientContext',
+                    function() {
+                        var ListId = GetUrlKeyValue("SPListId");
+                        var HostUrl = GetUrlKeyValue("SPHostUrl");
+                        var url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
+                        if (ListId != "") {
+                            this.documentQuery(url, ListId);
+                        } else {
+                        }
+                        this.documentQuery(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}');
+                    });
+
+
+            });
     };
-
-    $scope.addData = function () {
-        var n = $scope.gridOpts.data.length + 1;
-        $scope.gridOpts.data.push({
-            "Name": "New " + n,
-            "Path": "Person " + n,
-            "Type": "abc"
-        });
-    };
-
-    $scope.removeFirstRow = function () {
-        //if($scope.gridOpts.data.length > 0){
-        $scope.gridOpts.data.splice(0, 1);
-        //}
-    };
-
-    $scope.reset = function () {
-        data1 = angular.copy(origdata1);
-        data2 = angular.copy(origdata2);
-
-        $scope.gridOpts.data = data1;
-        $scope.gridOpts.columnDefs = columnDefs1;
-    }
 
     var columnDefs1 = [
         { name: 'Name' },
@@ -192,95 +179,16 @@ angular.module('Abs').controller('MainCtrl', ['$scope', function ($scope) {
       
     ];
 
-    var origdata1 = angular.copy(data1);
-
-    var columnDefs2 = [
-      { name: 'firstName' },
-      { name: 'lastName' },
-      { name: 'company' },
-      { name: 'employed' }
-    ];
-
-    var data2 = [
-      {
-          "firstName": "Waters",
-          "lastName": "Shepherd",
-          "company": "Kongene",
-          "employed": true
-      },
-      {
-          "firstName": "Hopper",
-          "lastName": "Zamora",
-          "company": "Acium",
-          "employed": true
-      },
-      {
-          "firstName": "Marcy",
-          "lastName": "Mclean",
-          "company": "Zomboid",
-          "employed": true
-      },
-      {
-          "firstName": "Tania",
-          "lastName": "Cruz",
-          "company": "Marqet",
-          "employed": true
-      },
-      {
-          "firstName": "Kramer",
-          "lastName": "Cline",
-          "company": "Parleynet",
-          "employed": false
-      },
-      {
-          "firstName": "Bond",
-          "lastName": "Pickett",
-          "company": "Brainquil",
-          "employed": false
-      }
-    ];
-
-    var origdata2 = angular.copy(data2);
-
+   
     $scope.gridOpts = {
         columnDefs: columnDefs1,
         data: data1
     };
 
 
-
-
-
-
-
-
-
-
-  //  var myData = [
-
-  //  ];
-  //  var dirFormation;
-
-
-    $scope.getDir = function documentQuery() {
-        var ListId = GetUrlKeyValue("SPListId");
-        var HostUrl = GetUrlKeyValue("SPHostUrl");
-        //var contextToken = 
-        //TokenHelper.GetContextTokenFromRequest(Page.Request);
-        var url;
-        var ctx;
-        var oLibDocs;
-        if (ListId != "") {
-            //Temp variant
-            url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
-            //;
-            ctx = new SP.ClientContext(url);
-            oLibDocs = ctx.get_web().get_lists().getById(ListId);
-        } else {
-            url = window.location.protocol + "//" + window.location.host + _spPageContextInfo.siteServerRelativeUrl;
-            ctx = new SP.ClientContext(url);
-            oLibDocs = ctx.get_web().get_lists().getByTitle("tmp2");
-        }
+    $scope.getDir = function documentQuery(url, ListId) {
+        var ctx = new SP.ClientContext(url);
+        var oLibDocs = ctx.get_web().get_lists().getById(ListId);
         var caml = SP.CamlQuery.createAllItemsQuery();
         caml.set_viewXml("<View Scope='All'><Query></Query></View>");
         $scope.allDocumentsCol = oLibDocs.getItems(caml);
@@ -306,28 +214,11 @@ angular.module('Abs').controller('MainCtrl', ['$scope', function ($scope) {
         });
         }
         $scope.$apply();
-        //alert(libList);
     }
 
     $scope.failed = function onFailedCallback(sender, args) {
         alert("failed. Message:" + args.get_message());
      
     }
-
-
-
-  //  var columnDefs = [
-  //{ name: 'Name' },
-  //{ name: 'Type' },
-  //{ name: 'Path' },
-
-  //  ];
-
-
-  //  $scope.gridOpts = {
-  //      columnDefs: columnDefs,
-  //      data: myData
-    //  };
-
 
 }]);

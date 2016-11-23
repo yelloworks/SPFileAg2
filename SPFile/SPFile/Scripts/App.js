@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-var treeApp = angular.module('treeApp', ['TreeWidget']);
+
 angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget','ngTouch', 'ui.grid']);
 
 

@@ -144,14 +144,10 @@
                <uib-tabset active="active">
                    <uib-tab index="0" heading="Static title">
                        <div ng-controller="MainCtrl">
-                           <button type="button" id="swapData" class="btn btn-success" ng-click="swapData()">Swap Data</button>
-                           <button type="button" id="addData" class="btn btn-success" ng-click="addData()">Add Data</button>
-                           <button type="button" id="removeFirstRow" class="btn btn-success" ng-click="removeFirstRow()">Remove First Row</button>
-                           <button type="button" id="reset" class="btn btn-success" ng-click="reset()">Reset</button>
                            <button type="button" id="try" class="btn btn-success" ng-click="getDir()">Try</button>
                            <br>
                            <br>
-                           <div id="grid1" ui-grid="gridOpts" class="grid"></div>
+                           <div id="grid1" ui-grid="gridOpts" class="grid""></div>
 <%--                           
                            <div id="grid1" ui-grid="gridOpts" class="grid"></div>--%>
                        </div>
