@@ -1,0 +1,59 @@
+﻿<div class="col-ms-12 menu-panel">
+    <div class="menu-panel-group">
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-copy"></span> Copy </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-scissors"></span> Cut </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-plus big"></span>Add folder</button>
+        </div>
+    </div>
+    <div class="menu-panel-group">
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Lock </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Unlock </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-retweet big"></span><br>Discard<br>checkout </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-list-alt big"></span><br>Edit<br>metadata </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-user big"></span><br>Permissions </button>
+        </div>
+    </div>
+    <div class="menu-panel-group">
+        <div class="menu-btn-group" ng-controller="DropdownCtrl">
+            <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                <button id="btn-dload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
+                    Download <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload">
+                    <li role="menuitem">
+                        <a href="#">Download</a>
+                    </li>
+                    <li role="menuitem">
+                        <a href="#">Archive</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                <button id="btn-upload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
+                    Upload <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-upload">
+                    <li role="menuitem">
+                        <a href="#">File</a>
+                    </li>
+                    <li role="menuitem">
+                        <a href="#">Folder</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -807,5 +807,6 @@
     <ProjectItemFile Source="angular-tree-widget.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="context.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="ui-grid.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="directives\ribbonMenu.js" Target="Scripts\directives\" Type="ElementFile" />
   </Files>
 </ProjectItem>

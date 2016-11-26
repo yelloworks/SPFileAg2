@@ -32,10 +32,14 @@
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>   
     <script type ="text/javascript" src="../Scripts/ui-grid.js"></script>
    
+    
+
     <script type="text/javascript" src="../Scripts/angular-tree-widget.js"> </script>
     <script type="text/javascript" src="../Scripts/App.js"></script>
     <script type="text/javascript" src ="../Scripts/controllers/controller.js"> </script>
     <script type ="text/javascript" src ="../Scripts/context.js"></script>
+    <script type ="text/javascript" src ="../Scripts/directives/ribbonMenu.js"></script>
+
     
 
     <style>
@@ -57,79 +61,12 @@
 
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
-    <input type="button" value="Button 3" onclick="documentQuery();"/>      
        
     <html lang="en" ng-app="Abs" >
-<%--    <div ng-app="app">
-        
-            <div ng-controller="MainCtrl">
-                <button type="button" id="reset" class="btn btn-success" ng-click="reset()">Reset</button>
-                <div id="grid1" ui-grid="{ data: myData }" class="grid"></div>
-            </div>
-        </div>--%>
-    <div>             
-        <div class="col-ms-12 menu-panel">
-            <div class="menu-panel-group">
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
-                </div>
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-copy"></span> Copy </button>
-                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-scissors"></span> Cut </button>
-                </div>
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-plus big"></span>Add folder</button>
-                </div>
-            </div>
-            <div class="menu-panel-group">
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Lock </button>
-                    <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Unlock </button>
-                </div>
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-retweet big"></span><br>Discard<br>checkout </button>
-                </div>
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-list-alt big"></span><br>Edit<br>metadata </button>
-                </div>
-                <div class="menu-btn-group">
-                    <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-user big"></span><br>Permissions </button>
-                </div>
-            </div>
-            <div class="menu-panel-group">
-                <div class="menu-btn-group" ng-controller="DropdownCtrl">
-                    <div class="btn-group" uib-dropdown dropdown-append-to-body>
-                        <button id="btn-dload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
-                            Download <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload">
-                            <li role="menuitem">
-                                <a href="#">Download</a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">Archive</a>
-                            </li>                           
-                        </ul>
-                    </div>
-                    <div class="btn-group" uib-dropdown dropdown-append-to-body>
-                        <button id="btn-upload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
-                            Upload <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-upload">
-                            <li role="menuitem">
-                                <a href="#">File</a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">Folder</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div> 
-            </div>
-        </div>
-        <div>
-            
 
+    <div>  
+        <ribbon-menu></ribbon-menu>
+        <div>
                 <div ng-controller="TreeController">
 
                     <div class="col-sm-4">
@@ -144,10 +81,9 @@
                <uib-tabset active="active">
                    <uib-tab index="0" heading="Static title">
                        <div ng-controller="MainCtrl">
-                           <button type="button" id="try" class="btn btn-success" ng-click="getDir()">Try</button>
                            <br>
                            <br>
-                           <div id="grid1" ui-grid="gridOpts" class="grid""></div>
+                           <div id="grid1" ui-grid="gridOpts" class="grid" ng-init="onstart()"></div>
 <%--                           
                            <div id="grid1" ui-grid="gridOpts" class="grid"></div>--%>
                        </div>

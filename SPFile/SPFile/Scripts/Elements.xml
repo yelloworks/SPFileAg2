@@ -805,5 +805,6 @@
     <File Path="Scripts\angular-tree-widget.js" Url="Scripts/angular-tree-widget.js" ReplaceContent="TRUE" />
     <File Path="Scripts\context.js" Url="Scripts/context.js" ReplaceContent="TRUE" />
     <File Path="Scripts\ui-grid.js" Url="Scripts/ui-grid.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\directives\ribbonMenu.js" Url="Scripts/directives/ribbonMenu.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>

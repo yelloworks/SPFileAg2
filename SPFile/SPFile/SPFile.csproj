@@ -98,6 +98,7 @@
     <None Include="Scripts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{657a775c-4cf0-41dd-b03a-c77788c275e5}</SharePointProjectItemId>
     </None>
+    <Content Include="Pages\menu-ribbon.html" />
     <Content Include="RibbonActionButton\Elements.xml">
       <OpcRelationship>feature-elementmanifest</OpcRelationship>
     </Content>
@@ -139,6 +140,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\context.js" />
     <Content Include="Scripts\controllers\controller.js" />
+    <Content Include="Scripts\directives\ribbonMenu.js" />
     <Content Include="Scripts\Elements.xml" />
     <Content Include="Scripts\App.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
