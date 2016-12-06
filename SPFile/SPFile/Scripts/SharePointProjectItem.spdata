@@ -808,5 +808,8 @@
     <ProjectItemFile Source="context.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="ui-grid.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="directives\ribbonMenu.js" Target="Scripts\directives\" Type="ElementFile" />
+    <ProjectItemFile Source="ngSelectable.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="jquery-ui-1.12.1.min.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="jquery-ui-1.12.1.js" Target="Scripts\" Type="ElementFile" />
   </Files>
 </ProjectItem>

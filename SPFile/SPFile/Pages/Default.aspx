@@ -8,7 +8,9 @@
 
 <%-- The markup and script in the following Content element will be placed in the <head> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
+    
     <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  
+
     <SharePoint:ScriptLink name="sp.js" runat="server" OnDemand="true" LoadAfterUI="true" Localizable="false" />
     <meta name="WebPartPageExpansion" content="full" />
 
@@ -22,6 +24,7 @@
 
     <!-- Add your JavaScript to the following file -->
     
+    <script type="text/javascript" src="../Scripts/jquery-ui-1.12.1.min.js"></script>
     <script type="text/javascript" src="../Scripts/angular.js"></script>
     <script type="text/javascript" src="../Scripts/angular-animate.js"></script>
     <script type="text/javascript" src="../Scripts/angular-recursion.js"> </script>
@@ -43,10 +46,7 @@
     
 
     <style>
-        .grid {
-      width: 500px;
-      height: 250px;
-    }
+
     </style>
     <script>
        

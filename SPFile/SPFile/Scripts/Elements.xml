@@ -806,5 +806,8 @@
     <File Path="Scripts\context.js" Url="Scripts/context.js" ReplaceContent="TRUE" />
     <File Path="Scripts\ui-grid.js" Url="Scripts/ui-grid.js" ReplaceContent="TRUE" />
     <File Path="Scripts\directives\ribbonMenu.js" Url="Scripts/directives/ribbonMenu.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\ngSelectable.js" Url="Scripts/ngSelectable.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\jquery-ui-1.12.1.min.js" Url="Scripts/jquery-ui-1.12.1.min.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\jquery-ui-1.12.1.js" Url="Scripts/jquery-ui-1.12.1.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>
