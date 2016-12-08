@@ -172,7 +172,7 @@
             function($scope, $window) {
                 $scope.tabs = [
                     { title: 'Dynamic Title 1', content: 'Dynamic content 1' },
-                    { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: true }
+                    { title: 'Dynamic Title 2', content: 'Dynamic content 2' }
                 ];
 
                 $scope.alertMe = function() {
@@ -184,6 +184,13 @@
                 $scope.model = {
                     name: 'Tabs'
                 };
+
+
+                $scope.onSelection = function ($index) {
+                    var ind = {index: $index}
+                    $scope.$broadcast('selectedEvent', $index);
+                };
+
             });
 
     angular.module('Abs')
@@ -292,4 +299,72 @@
                 return methods;
             });
 
+    angular.module('Abs')
+    .factory('selectedBufferCtrl',
+        function () {
+            var methods = {};
+
+            var selectedItemsBuffer = [];
+            var selectedPathID = "";
+
+            methods.addToBuffer = function (bufferItems, bufferPathID) {
+                selectedItemsBuffer = [];
+                selectedPathID = "";
+                selectedPathID = bufferPathID;
+                selectedItemsBuffer.push(bufferItems);
+            };
+            methods.getFBuffer = function () {
+                return selectedItemsBuffer;
+            };
+            methods.getPathID = function () {
+                return selectedPathID;
+            };
+            return methods;
+        });
+
+    angular
+        .module('Abs')
+        .controller('tabContentController',
+            ['$scope', 'selectedBufferCtrl', function ($scope, selectedBufferCtrl) {
+                $scope.selection = true;
+                $scope.selected = [];
+                $scope.log = [];
+                $scope.index;
+                $scope.friends = [
+                    { name: 'John', age: 25, gender: 'boy' },
+                    { name: 'Jessie', age: 30, gender: 'girl' },
+                    { name: 'Johanna', age: 28, gender: 'girl' },
+                    { name: 'Joy', age: 15, gender: 'girl' },
+                    { name: 'Mary', age: 28, gender: 'girl' },
+                    { name: 'Peter', age: 95, gender: 'boy' },
+                    { name: 'Sebastian', age: 50, gender: 'boy' },
+                    { name: 'Erika', age: 27, gender: 'girl' },
+                    { name: 'Patrick', age: 40, gender: 'boy' },
+                    { name: 'Samantha', age: 60, gender: 'girl' }
+                ];
+                $scope.selectionStart = function() {
+                    $scope.log.push(($scope.log.length + 1) + ': selection start!');
+                };
+                $scope.selectionStop = function (selected) {
+                    selectedBufferCtrl.addToBuffer(selected, "tmp");
+                    $scope.log.push(($scope.log.length + 1) + ': items selected: ' + selected.length);
+                };
+
+                $scope.$on('selectedEvent', function(event, args) {
+                    alert(args);
+                });
+
+
+            }]);
+
+    angular.module('Abs').controller('tmpCtrl', ['$scope','selectedBufferCtrl', '$log', function($scope, selectedBufferCtrl, $log) {
+        $scope.model = [];
+
+        $scope.$log = $log;
+        $scope.message = selectedBufferCtrl.getFBuffer();
+
+        $scope.refresh = function() {
+            return selectedBufferCtrl.getFBuffer();
+        };
+    }]);
 })()

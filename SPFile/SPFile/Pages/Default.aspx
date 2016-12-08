@@ -9,7 +9,7 @@
 <%-- The markup and script in the following Content element will be placed in the <head> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
     
-    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>  
+    
 
     <SharePoint:ScriptLink name="sp.js" runat="server" OnDemand="true" LoadAfterUI="true" Localizable="false" />
     <meta name="WebPartPageExpansion" content="full" />
@@ -24,6 +24,7 @@
 
     <!-- Add your JavaScript to the following file -->
     
+    <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="../Scripts/jquery-ui-1.12.1.min.js"></script>
     <script type="text/javascript" src="../Scripts/angular.js"></script>
     <script type="text/javascript" src="../Scripts/angular-animate.js"></script>
@@ -34,6 +35,7 @@
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap.js"> </script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>   
     <script type ="text/javascript" src="../Scripts/ui-grid.js"></script>
+    <script type ="text/javascript" src="../Scripts/ngSelectable.js"></script>
    
     
 
@@ -46,7 +48,65 @@
     
 
     <style>
+        section {
+            width: 700px;
+            margin: auto;
+        }
 
+        ul {
+            list-style: none outside none;
+            display: inline-block;
+            width: 45%;
+        }
+
+        .selected-friends {
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 2px;
+            margin: 2px;
+        }
+
+        #feedback { font-size: 1.4em; }
+
+        #selectable .ui-selecting { background: #FECA40; }
+
+        #selectable .ui-selected {
+            background: #F39814;
+            color: white;
+        }
+
+        #selectable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #selectable li {
+            width: auto;
+            padding: 5px 10px;
+            margin: 5px 0;
+            border: 2px solid #444;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .logList {
+            float: right;
+            min-height: 200px;
+            padding: 5px 15px;
+            border: 5px solid #000;
+            border-radius: 15px;
+        }
+
+        .logList:before {
+            content: 'log';
+            padding: 0 5px;
+            position: relative;
+            top: -1.1em;
+            background-color: #FFF;
+        }
     </style>
     <script>
        
@@ -66,15 +126,19 @@
 
     <div>  
         <ribbon-menu></ribbon-menu>
+        
+        <div ng-controller ="tmpCtrl">
+            <input type="button" ng-click="$log.log(refresh())" /> 
+        </div>
         <div>
-                <div ng-controller="TreeController">
+<%--                <div ng-controller="TreeController">
 
                     <div class="col-sm-4">
                         <div class="tree-container">
                             <tree nodes='treeNodes' options='options'></tree>
                         </div>
                     </div>
-                </div>
+                </div>--%>
 
            
             <div class = "col-sm-8" ng-controller="TabsDemoCtrl">             
@@ -88,8 +152,26 @@
                            <div id="grid1" ui-grid="gridOpts" class="grid"></div>--%>
                        </div>
                    </uib-tab>
-                    <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
-                        {{tab.content}}
+                    <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >
+                        
+                        
+                        <section ng-controller="tabContentController">
+
+                            <p>
+                                You've selected:
+                                <span ng-hide="selected">none</span>
+                                <span class="selected-friends" ng-repeat="friend in selected"> {{friend.name}}</span>
+                            </p>
+
+                            <ul id="selectable"
+                                selectable="selection"
+                                selectable-list="friends"
+                                selectable-out="selected"
+                                selectable-events="{start:'selectionStart()', stop:'selectionStop($selected)'}">
+                                <li class="ui-widget-content" ng-repeat="friend in friends">{{friend.name}}</li>
+                            </ul>
+                        </section>                                            
+
                     </uib-tab>
                     <uib-tab index="3" select="alertMe()">
                         <uib-tab-heading>
