@@ -155,20 +155,19 @@
                     <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >
                         
                         
-                        <section ng-controller="tabContentController">
-
+                        <section ng-controller="tabContentController" ng-init="index=$index">
                             <p>
                                 You've selected:
                                 <span ng-hide="selected">none</span>
                                 <span class="selected-friends" ng-repeat="friend in selected"> {{friend.name}}</span>
                             </p>
-
+                          
                             <ul id="selectable"
                                 selectable="selection"
                                 selectable-list="friends"
                                 selectable-out="selected"
                                 selectable-events="{start:'selectionStart()', stop:'selectionStop($selected)'}">
-                                <li class="ui-widget-content" ng-repeat="friend in friends">{{friend.name}}</li>
+                                <li class="ui-widget-content" ng-repeat="friend in friends" >{{friend.name}}</li>
                             </ul>
                         </section>                                            
 

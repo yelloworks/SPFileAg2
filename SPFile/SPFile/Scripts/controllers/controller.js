@@ -329,7 +329,7 @@
                 $scope.selection = true;
                 $scope.selected = [];
                 $scope.log = [];
-                $scope.index;
+                $scope.index = "";
                 $scope.friends = [
                     { name: 'John', age: 25, gender: 'boy' },
                     { name: 'Jessie', age: 30, gender: 'girl' },
@@ -351,7 +351,7 @@
                 };
 
                 $scope.$on('selectedEvent', function(event, args) {
-                    alert(args);
+                    if(args == $scope.index) {selectedBufferCtrl.addToBuffer($scope.selected, "tmp")};
                 });
 
 
