@@ -171,8 +171,8 @@
         .controller('TabsDemoCtrl',
             function($scope, $window) {
                 $scope.tabs = [
-                    { title: 'Dynamic Title 1', content: 'Dynamic content 1' },
-                    { title: 'Dynamic Title 2', content: 'Dynamic content 2' }
+                    { title: 'Dynamic Title 1' },
+                    { title: 'Dynamic Title 2' }
                 ];
 
                 $scope.alertMe = function() {
@@ -187,9 +187,33 @@
 
 
                 $scope.onSelection = function ($index) {
-                    var ind = {index: $index}
+
                     $scope.$broadcast('selectedEvent', $index);
                 };
+
+
+                var setAllInactive = function () {
+                    angular.forEach($scope.tabs, function (tabs) {
+                        tabs.active = false;
+                    });
+                };
+
+                var addNewWorkspace = function () {
+
+                    $scope.tabs.push({
+                        title: 'Dynamic Title'
+                    });
+                };
+
+
+
+                $scope.addWorkspace = function () {
+                    //setAllInactive();
+                    addNewWorkspace();
+                };
+
+
+
 
             });
 

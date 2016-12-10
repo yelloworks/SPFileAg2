@@ -143,18 +143,14 @@
            
             <div class = "col-sm-8" ng-controller="TabsDemoCtrl">             
                <uib-tabset active="active">
-                   <uib-tab index="0" heading="Static title">
+ <%--                  <uib-tab index="0" heading="Static title">
                        <div ng-controller="MainCtrl">
                            <br>
                            <br>
                            <div id="grid1" ui-grid="gridOpts" class="grid" ng-init="onstart()"></div>
-<%--                           
-                           <div id="grid1" ui-grid="gridOpts" class="grid"></div>--%>
                        </div>
-                   </uib-tab>
-                    <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >
-                        
-                        
+                   </uib-tab>--%>
+                    <uib-tab index="$index" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >                                              
                         <section ng-controller="tabContentController" ng-init="index=$index">
                             <p>
                                 You've selected:
@@ -170,15 +166,13 @@
                                 <li class="ui-widget-content" ng-repeat="friend in friends" >{{friend.name}}</li>
                             </ul>
                         </section>                                            
-
                     </uib-tab>
-                    <uib-tab index="3" select="alertMe()">
-                        <uib-tab-heading>
-                            <i class="glyphicon glyphicon-bell"></i> Alert!
-                        </uib-tab-heading>
-                        I've got an HTML heading, and a select callback. Pretty cool!
-                    </uib-tab>
-                </uib-tabset>
+                   <uib-tab ng-click="addWorkspace()">
+                       <uib-tab-heading>
+                           <i class="glyphicon glyphicon-plus"></i>
+                       </uib-tab-heading>
+                   </uib-tab>
+               </uib-tabset>
             </div>
        </div>
  
