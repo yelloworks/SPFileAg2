@@ -167,12 +167,37 @@
                 $scope.appendToEl = angular.element(document.querySelector('#dropdown-long-content'));
             });
 
+    angular.element(document).ready(function () {
+        var $inj = angular.bootstrap(document.body, ['Abs']);
+        var $rootScope = $inj.get("$rootScope");
+
+        SP.SOD.executeFunc('SP.Runtime.js',
+            'SP.ClientContext',
+            function() {
+                SP.SOD.executeFunc('SP.js',
+                    'SP.ClientContext',
+                    function() {
+                        var ListId = GetUrlKeyValue("SPListId");
+                        var url = window.location.protocol +
+                            "//" +
+                            window.location.host +
+                            _spPageContextInfo.siteServerRelativeUrl;
+
+
+                        if (ListId != "") {
+                            $rootScope.$broadcast("pageInit", url, ListId);
+                            $rootScope.$digest();
+                        }
+                    });
+            }); 
+    });
+   
+
     angular.module('Abs')
-        .controller('TabsDemoCtrl',
+        .controller('tabsCtrl',
             function($scope, $window) {
                 $scope.tabs = [
-                    { title: 'Dynamic Title 1' },
-                    { title: 'Dynamic Title 2' }
+
                 ];
 
                 $scope.alertMe = function() {
@@ -180,11 +205,9 @@
                         $window.alert('You\'ve selected the alert tab!');
                     });
                 };
-
                 $scope.model = {
                     name: 'Tabs'
                 };
-
 
                 $scope.onSelection = function ($index) {
 
@@ -198,25 +221,33 @@
                     });
                 };
 
-                var addNewWorkspace = function () {
-
+                var addNewWorkspace = function (url, listId) {
                     $scope.tabs.push({
-                        title: 'Dynamic Title'
+                        title: listId,
+                        url: url,
+                        active:true
                     });
                 };
 
 
+                $scope.addWorkspace = function() {
+                    setAllInactive();
 
-                $scope.addWorkspace = function () {
-                    //setAllInactive();
-                    addNewWorkspace();
+
+                    var url = window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        _spPageContextInfo.siteServerRelativeUrl;
+                    addNewWorkspace(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}');
                 };
 
-
+                $scope.$on('pageInit', function (event, url, listId) {
+                    addNewWorkspace(url, listId);
+                });
 
 
             });
-
+/*
     angular.module('Abs')
         .controller('MainCtrl',
         [
@@ -233,10 +264,14 @@
                                 function() {
                                     var ListId = GetUrlKeyValue("SPListId");
                                     var HostUrl = GetUrlKeyValue("SPHostUrl");
+
+
                                     var url = window.location.protocol +
                                         "//" +
                                         window.location.host +
                                         _spPageContextInfo.siteServerRelativeUrl;
+
+
                                     if (ListId != "") {
                                         $scope.getDir(url, ListId);
                                     } else {
@@ -306,6 +341,105 @@
             }
         ]);
 
+*/
+    angular.module('Abs')
+        .controller('MainCtrl',
+        [
+            '$scope', function ($scope) {
+
+
+                $scope.onstart = function () {
+                    SP.SOD.executeFunc('SP.Runtime.js',
+                        'SP.ClientContext',
+                        function () {
+                            SP.SOD.executeFunc('SP.js',
+                                'SP.ClientContext',
+                                function () {
+                                    var ListId = GetUrlKeyValue("SPListId");
+                                    var HostUrl = GetUrlKeyValue("SPHostUrl");
+                                    var SiteUrl = GetUrlKeyValue("SPSiteUrl");
+                                    var Source = GetUrlKeyValue("SPSource");
+
+
+                                    var url = window.location.protocol +
+                                        "//" +
+                                        window.location.host +
+                                        _spPageContextInfo.siteServerRelativeUrl;
+
+
+                                    if (ListId != "") {
+                                        $scope.getDir(url, ListId);
+                                    } else {
+                                        //Временно нацелена на локальные Документы
+                                        $scope.getDir(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}');
+                                    }
+
+                                });
+
+
+                        });
+                };
+
+                var columnDefs1 = [
+                    { name: 'Name' },
+                    { name: 'Type' },
+                    { name: 'Path' },
+                ];
+
+                var data1 = [
+                ];
+
+
+                $scope.gridOpts = {
+                    columnDefs: columnDefs1,
+                    data: data1
+                };
+
+
+                $scope.getDir = function documentQuery(url, ListId) {
+                    var ctx = new SP.ClientContext(url);
+                    var oLibDocs = ctx.get_web().get_lists().getById(ListId);
+                    var caml = SP.CamlQuery.createAllItemsQuery();
+                    caml.set_viewXml("<View Scope='All'><Query></Query></View>");
+                    $scope.allDocumentsCol = oLibDocs.getItems(caml);
+                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
+                    ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
+                        Function.createDelegate($scope, $scope.failed));
+                }
+
+
+                $scope.succeeded = function onSucceededCallback(sender, args) {
+                    var libList = "";
+                    var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
+                    while (ListEnumerator.moveNext()) {
+                        var currentItem = ListEnumerator.get_current();
+                        var currentItemURL = _spPageContextInfo
+                            .webServerRelativeUrl +
+                            currentItem.get_item('ServerUrl');
+                        var currentItemType = currentItem.get_item('FSObjType');
+                        libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
+                        $scope.gridOpts.data.push(
+                        {
+                            "Name": currentItem.get_item('FileLeafRef'),
+                            "Type": currentItemType,
+                            "Path": currentItemURL
+                        });
+                    }
+                    $scope.$apply();
+                }
+
+                $scope.failed = function onFailedCallback(sender, args) {
+                    alert("failed. Message:" + args.get_message());
+
+                }
+
+            }
+        ]);
+
+
+
+
+
     angular.module('Abs')
         .factory('bufferCtrl',
             function() {
@@ -324,7 +458,7 @@
             });
 
     angular.module('Abs')
-    .factory('selectedBufferCtrl',
+    .factory('selectedBufferService',
         function () {
             var methods = {};
 
@@ -349,46 +483,88 @@
     angular
         .module('Abs')
         .controller('tabContentController',
-            ['$scope', 'selectedBufferCtrl', function ($scope, selectedBufferCtrl) {
+            ['$scope', 'selectedBufferService', function ($scope, selectedBufferService) {
                 $scope.selection = true;
                 $scope.selected = [];
                 $scope.log = [];
                 $scope.index = "";
-                $scope.friends = [
-                    { name: 'John', age: 25, gender: 'boy' },
-                    { name: 'Jessie', age: 30, gender: 'girl' },
-                    { name: 'Johanna', age: 28, gender: 'girl' },
-                    { name: 'Joy', age: 15, gender: 'girl' },
-                    { name: 'Mary', age: 28, gender: 'girl' },
-                    { name: 'Peter', age: 95, gender: 'boy' },
-                    { name: 'Sebastian', age: 50, gender: 'boy' },
-                    { name: 'Erika', age: 27, gender: 'girl' },
-                    { name: 'Patrick', age: 40, gender: 'boy' },
-                    { name: 'Samantha', age: 60, gender: 'girl' }
+                $scope.fileItems = [
+
                 ];
                 $scope.selectionStart = function() {
                     $scope.log.push(($scope.log.length + 1) + ': selection start!');
                 };
                 $scope.selectionStop = function (selected) {
-                    selectedBufferCtrl.addToBuffer(selected, "tmp");
+                    selectedBufferService.addToBuffer(selected, "tmp");
                     $scope.log.push(($scope.log.length + 1) + ': items selected: ' + selected.length);
                 };
+                $scope.onStart = function($index) {
+                    $scope.index = $index;
+                    var listId = $scope.tabs[$scope.index].title;
+                    var url = $scope.tabs[$scope.index].url;
+                    $scope.getDir(url, listId);
+                };
+
+
+                $scope.getDir = function documentQuery(url, ListId) {
+                    var ctx = new SP.ClientContext(url);
+                    var oLibDocs = ctx.get_web().get_lists().getById(ListId);
+                    var caml = SP.CamlQuery.createAllItemsQuery();
+                    caml.set_viewXml("<View Scope='All'><Query></Query></View>");
+                    $scope.allDocumentsCol = oLibDocs.getItems(caml);
+                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
+                    ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
+                        Function.createDelegate($scope, $scope.failed));
+                }
+
+
+                $scope.succeeded = function onSucceededCallback(sender, args) {
+                    var libList = "";
+                    var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
+                    while (ListEnumerator.moveNext()) {
+                        var currentItem = ListEnumerator.get_current();
+                        var currentItemURL = _spPageContextInfo
+                            .webServerRelativeUrl +
+                            currentItem.get_item('ServerUrl');
+                        var currentItemType = currentItem.get_item('FSObjType');
+                        libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
+                        $scope.fileItems.push(
+                        {
+                            "name": currentItem.get_item('FileLeafRef'),
+                            "type": currentItemType,
+                            "path": currentItemURL
+                        });
+                    }
+                    $scope.$apply();
+                }
+
+                $scope.failed = function onFailedCallback(sender, args) {
+                    alert("failed. Message:" + args.get_message());
+
+                }
+
+
+
+
+
+
+
 
                 $scope.$on('selectedEvent', function(event, args) {
-                    if(args == $scope.index) {selectedBufferCtrl.addToBuffer($scope.selected, "tmp")};
+                    if(args == $scope.index) {selectedBufferService.addToBuffer($scope.selected, "tmp")};
                 });
 
 
             }]);
 
-    angular.module('Abs').controller('tmpCtrl', ['$scope','selectedBufferCtrl', '$log', function($scope, selectedBufferCtrl, $log) {
+    angular.module('Abs').controller('tmpCtrl', ['$scope','selectedBufferService', '$log', function($scope, selectedBufferService, $log) {
         $scope.model = [];
 
         $scope.$log = $log;
-        $scope.message = selectedBufferCtrl.getFBuffer();
+        $scope.message = selectedBufferService.getFBuffer();
 
         $scope.refresh = function() {
-            return selectedBufferCtrl.getFBuffer();
+            return selectedBufferService.getFBuffer();
         };
     }]);
 })()

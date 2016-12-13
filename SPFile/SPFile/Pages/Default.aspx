@@ -122,7 +122,7 @@
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
        
-    <html lang="en" ng-app="Abs" >
+    <html lang="en" >
 
     <div>  
         <ribbon-menu></ribbon-menu>
@@ -141,8 +141,8 @@
                 </div>--%>
 
            
-            <div class = "col-sm-8" ng-controller="TabsDemoCtrl">             
-               <uib-tabset active="active">
+            <div class = "col-sm-8" ng-controller="tabsCtrl">             
+               <uib-tabset>
  <%--                  <uib-tab index="0" heading="Static title">
                        <div ng-controller="MainCtrl">
                            <br>
@@ -150,24 +150,24 @@
                            <div id="grid1" ui-grid="gridOpts" class="grid" ng-init="onstart()"></div>
                        </div>
                    </uib-tab>--%>
-                    <uib-tab index="$index" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >                                              
-                        <section ng-controller="tabContentController" ng-init="index=$index">
+                    <uib-tab index="$index" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" active=tab.active >                                              
+                        <section ng-controller="tabContentController" ng-init="onStart($index)">
                             <p>
                                 You've selected:
                                 <span ng-hide="selected">none</span>
-                                <span class="selected-friends" ng-repeat="friend in selected"> {{friend.name}}</span>
+                                <span class="selected-friends" ng-repeat="item in selected"> {{item.name}}</span>
                             </p>
                           
                             <ul id="selectable"
                                 selectable="selection"
-                                selectable-list="friends"
+                                selectable-list="fileItems"
                                 selectable-out="selected"
                                 selectable-events="{start:'selectionStart()', stop:'selectionStop($selected)'}">
-                                <li class="ui-widget-content" ng-repeat="friend in friends" >{{friend.name}}</li>
+                                <li class="ui-widget-content" ng-repeat="fileItem in fileItems" >{{fileItem.name}}</li>
                             </ul>
                         </section>                                            
                     </uib-tab>
-                   <uib-tab ng-click="addWorkspace()">
+                   <uib-tab ng-click="addWorkspace()" active="false">
                        <uib-tab-heading>
                            <i class="glyphicon glyphicon-plus"></i>
                        </uib-tab-heading>
