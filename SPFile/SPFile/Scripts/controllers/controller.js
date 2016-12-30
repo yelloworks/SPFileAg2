@@ -171,6 +171,18 @@
         var $inj = angular.bootstrap(document.body, ['Abs']);
         var $rootScope = $inj.get("$rootScope");
 
+        function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
         SP.SOD.executeFunc('SP.Runtime.js',
             'SP.ClientContext',
             function() {
@@ -178,6 +190,23 @@
                     'SP.ClientContext',
                     function() {
                         var ListId = GetUrlKeyValue("SPListId");
+
+
+                        var ItemId = GetUrlKeyValue("SPItemId");
+                        var ItemUrl = GetUrlKeyValue("SPItemUrl");
+                        var SiteUrl = GetUrlKeyValue("SPSiteUrl");
+                        var ListUrlDir = GetUrlKeyValue("SPListUrlDir");
+                        var Source = GetUrlKeyValue('SPSource', false);
+                        var SelectedListId = GetUrlKeyValue("SPSelectedListId");
+                        var SelectedItemId = GetUrlKeyValue("SPSelectedItemId");
+                        var HostUrl = GetUrlKeyValue("SPHostUrl");
+                        var Title = GetUrlKeyValue("SPTitle");
+                        //var AppWebUrl = GeturlKeyValue('SPAppWebUrl');
+
+                        var decodeSourse = decodeURIComponent(Source);
+                        var SiteUrl2 = getParameterByName('RootFolder', decodeSourse);
+                        var AppWebUrl2 = getParameterByName('SPSource');
+
                         var url = window.location.protocol +
                             "//" +
                             window.location.host +
@@ -195,10 +224,12 @@
 
     angular.module('Abs')
         .controller('tabsCtrl',
-            function($scope, $window) {
+            function($scope, $window,$timeout) {
                 $scope.tabs = [
 
                 ];
+                $scope.activeTab = 0;
+
 
                 $scope.alertMe = function() {
                     setTimeout(function() {
@@ -214,26 +245,18 @@
                     $scope.$broadcast('selectedEvent', $index);
                 };
 
-
-                var setAllInactive = function () {
-                    angular.forEach($scope.tabs, function (tabs) {
-                        tabs.active = false;
-                    });
-                };
-
                 var addNewWorkspace = function (url, listId) {
                     $scope.tabs.push({
                         title: listId,
-                        url: url,
-                        active:true
+                        url: url
+                    });
+                    $timeout(function () {
+                        $scope.activeTab = $scope.tabs.length-1;
                     });
                 };
 
 
                 $scope.addWorkspace = function() {
-                    setAllInactive();
-
-
                     var url = window.location.protocol +
                         "//" +
                         window.location.host +
@@ -488,9 +511,21 @@
                 $scope.selected = [];
                 $scope.log = [];
                 $scope.index = "";
-                $scope.fileItems = [
+                $scope.fileItems = [];
 
-                ];
+                $scope.doubleClick = function() {
+                    //Tmp no check
+                    var item = $scope.selected[0];
+                    $scope.fileItems = [];
+
+                    //Not rewrite, no sence
+                    var url = $scope.tabs[$scope.index].url;
+
+
+                    $scope.getDir(url, item.GUID);
+
+                };
+
                 $scope.selectionStart = function() {
                     $scope.log.push(($scope.log.length + 1) + ': selection start!');
                 };
@@ -512,7 +547,7 @@
                     var caml = SP.CamlQuery.createAllItemsQuery();
                     caml.set_viewXml("<View Scope='All'><Query></Query></View>");
                     $scope.allDocumentsCol = oLibDocs.getItems(caml);
-                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
+                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
                     ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
                         Function.createDelegate($scope, $scope.failed));
                 }
@@ -527,12 +562,28 @@
                             .webServerRelativeUrl +
                             currentItem.get_item('ServerUrl');
                         var currentItemType = currentItem.get_item('FSObjType');
+
+                        var currentItemFileRef = currentItem.get_item('FileRef');
+                        var currentItemFileDirRef = currentItem.get_item('FileDirRef');
+
+                        var currentItemID = currentItem.get_item('ID');
+                        var currentItemGUID = currentItem.get_item('GUID');
+
+                        var currentItemGUID = currentItem.get_item('GUID');
+                        
                         libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
+
+                        var guid = currentItemGUID.toString("B");
                         $scope.fileItems.push(
                         {
                             "name": currentItem.get_item('FileLeafRef'),
                             "type": currentItemType,
-                            "path": currentItemURL
+                            "path": currentItemURL,
+                            "FileRef": currentItemFileRef,
+                            "FileDirRef": currentItemFileDirRef,
+                            "GUID": guid,
+                            "ID": currentItemID
+                            
                         });
                     }
                     $scope.$apply();

@@ -142,7 +142,7 @@
 
            
             <div class = "col-sm-8" ng-controller="tabsCtrl">             
-               <uib-tabset>
+               <uib-tabset active="activeTab">
  <%--                  <uib-tab index="0" heading="Static title">
                        <div ng-controller="MainCtrl">
                            <br>
@@ -150,7 +150,7 @@
                            <div id="grid1" ui-grid="gridOpts" class="grid" ng-init="onstart()"></div>
                        </div>
                    </uib-tab>--%>
-                    <uib-tab index="$index" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" active=tab.active >                                              
+                    <uib-tab index="$index" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >                                              
                         <section ng-controller="tabContentController" ng-init="onStart($index)">
                             <p>
                                 You've selected:
@@ -163,11 +163,11 @@
                                 selectable-list="fileItems"
                                 selectable-out="selected"
                                 selectable-events="{start:'selectionStart()', stop:'selectionStop($selected)'}">
-                                <li class="ui-widget-content" ng-repeat="fileItem in fileItems" >{{fileItem.name}}</li>
+                                <li class="ui-widget-content" ng-repeat="fileItem in fileItems" ng-dblClick="doubleClick()">{{fileItem.name}}</li>
                             </ul>
                         </section>                                            
                     </uib-tab>
-                   <uib-tab ng-click="addWorkspace()" active="false">
+                   <uib-tab ng-click="addWorkspace()">
                        <uib-tab-heading>
                            <i class="glyphicon glyphicon-plus"></i>
                        </uib-tab-heading>
