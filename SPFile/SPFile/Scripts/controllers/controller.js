@@ -270,101 +270,7 @@
 
 
             });
-/*
-    angular.module('Abs')
-        .controller('MainCtrl',
-        [
-            '$scope', function($scope) {
 
-
-                $scope.onstart = function() {
-
-                    SP.SOD.executeFunc('SP.Runtime.js',
-                        'SP.ClientContext',
-                        function() {
-                            SP.SOD.executeFunc('SP.js',
-                                'SP.ClientContext',
-                                function() {
-                                    var ListId = GetUrlKeyValue("SPListId");
-                                    var HostUrl = GetUrlKeyValue("SPHostUrl");
-
-
-                                    var url = window.location.protocol +
-                                        "//" +
-                                        window.location.host +
-                                        _spPageContextInfo.siteServerRelativeUrl;
-
-
-                                    if (ListId != "") {
-                                        $scope.getDir(url, ListId);
-                                    } else {
-                                        //Временно нацелена на локальные Документы
-                                        $scope.getDir(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}');
-                                    }
-
-                                });
-
-
-                        });
-                };
-
-                var columnDefs1 = [
-                    { name: 'Name' },
-                    { name: 'Type' },
-                    { name: 'Path' },
-                ];
-
-                var data1 = [
-                ];
-
-
-                $scope.gridOpts = {
-                    columnDefs: columnDefs1,
-                    data: data1
-                };
-
-
-                $scope.getDir = function documentQuery(url, ListId) {
-                    var ctx = new SP.ClientContext(url);
-                    var oLibDocs = ctx.get_web().get_lists().getById(ListId);
-                    var caml = SP.CamlQuery.createAllItemsQuery();
-                    caml.set_viewXml("<View Scope='All'><Query></Query></View>");
-                    $scope.allDocumentsCol = oLibDocs.getItems(caml);
-                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
-                    ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
-                        Function.createDelegate($scope, $scope.failed));
-                }
-
-
-                $scope.succeeded = function onSucceededCallback(sender, args) {
-                    var libList = "";
-                    var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
-                    while (ListEnumerator.moveNext()) {
-                        var currentItem = ListEnumerator.get_current();
-                        var currentItemURL = _spPageContextInfo
-                            .webServerRelativeUrl +
-                            currentItem.get_item('ServerUrl');
-                        var currentItemType = currentItem.get_item('FSObjType');
-                        libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
-                        $scope.gridOpts.data.push(
-                        {
-                            "Name": currentItem.get_item('FileLeafRef'),
-                            "Type": currentItemType,
-                            "Path": currentItemURL
-                        });
-                    }
-                    $scope.$apply();
-                }
-
-                $scope.failed = function onFailedCallback(sender, args) {
-                    alert("failed. Message:" + args.get_message());
-
-                }
-
-            }
-        ]);
-
-*/
     angular.module('Abs')
         .controller('MainCtrl',
         [
@@ -458,10 +364,6 @@
 
             }
         ]);
-
-
-
-
 
     angular.module('Abs')
         .factory('bufferCtrl',
