@@ -212,9 +212,10 @@
                             window.location.host +
                             _spPageContextInfo.siteServerRelativeUrl;
 
+                        var relativeUrl = "/";
 
                         if (ListId != "") {
-                            $rootScope.$broadcast("pageInit", url, ListId);
+                            $rootScope.$broadcast("pageInit", url, ListId, relativeUrl);
                             $rootScope.$digest();
                         }
                     });
@@ -245,10 +246,12 @@
                     $scope.$broadcast('selectedEvent', $index);
                 };
 
-                var addNewWorkspace = function (url, listId) {
+                var addNewWorkspace = function (url, listId, relativeUrl) {
                     $scope.tabs.push({
                         title: listId,
-                        url: url
+                        url: url,
+                        listId: listId,
+                        relativeUrl: relativeUrl
                     });
                     $timeout(function () {
                         $scope.activeTab = $scope.tabs.length-1;
@@ -261,22 +264,151 @@
                         "//" +
                         window.location.host +
                         _spPageContextInfo.siteServerRelativeUrl;
-                    addNewWorkspace(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}');
+                    addNewWorkspace(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}', "/");
+                };
+                $scope.removeTab = function (index, event) {
+                    event.preventDefault();
+                    $scope.tabs.splice(index, 1);
                 };
 
-                $scope.$on('pageInit', function (event, url, listId) {
-                    addNewWorkspace(url, listId);
+
+                $scope.$on('pageInit', function (event, url, listId, relativeUrl) {
+                    addNewWorkspace(url, listId, relativeUrl);
                 });
 
 
             });
 
+    angular
+        .module('Abs')
+        .controller('tabContentController',
+            ['$scope', 'selectedBufferService', function ($scope, selectedBufferService) {
+                $scope.selection = true;
+                $scope.selected = [];
+                $scope.log = [];
+                $scope.index = "";
+                $scope.fileItems = [];
+
+                $scope.doubleClick = function() {
+                    //Tmp no check
+                    var item = $scope.selected[0];
+                    $scope.fileItems = [];
+
+                    //Not rewrite, no sence
+                   // var url = $scope.tabs[$scope.index].url;
+
+                    $scope.tabs[$scope.index].title = item.name;
+                    $scope.tabs[$scope.index].relativeUrl = item.FileRef;
+
+                    $scope.getDir();
+
+                };
+
+                var getRelativeUrlString = function(parts) {
+                    var outItem = "";
+                    parts.forEach(function(item, i, arr) {
+                        outItem += "/" +item;
+                    });
+                    return outItem;
+                };
+
+                $scope.upBtnClicked = function() {
+                    var arrayPath = $scope.tabs[$scope.index].relativeUrl.split('/');
+                    if (arrayPath.length > 2) {
+                        var newRelativeUrl = getRelativeUrlString(arrayPath.slice(1, arrayPath.length - 1));
+                        $scope.tabs[$scope.index].title = arrayPath.slice(arrayPath.length - 2)[0];
+                        $scope.tabs[$scope.index].relativeUrl = newRelativeUrl;
+                        $scope.fileItems = [];
+                        $scope.getDir();
+                    }
+            };
+
+
+                $scope.selectionStart = function() {
+                    $scope.log.push(($scope.log.length + 1) + ': selection start!');
+                };
+                $scope.selectionStop = function (selected) {
+                    selectedBufferService.addToBuffer(selected, "tmp");
+                    $scope.log.push(($scope.log.length + 1) + ': items selected: ' + selected.length);
+                };
+                $scope.onStart = function($index) {
+                    $scope.index = $index;
+
+                    //var listId = $scope.tabs[$scope.index].title;
+                    //var url = $scope.tabs[$scope.index].url;
+                    //var relativeUrl = $scope.tabs[$scope.index].relativeUrl;
+
+                    $scope.getDir();
+                };
+
+
+                $scope.getDir = function documentQuery() {
+                    var ctx = new SP.ClientContext($scope.tabs[$scope.index].url);
+                    var oLibDocs = ctx.get_web().get_lists().getById($scope.tabs[$scope.index].listId);
+                    var caml = SP.CamlQuery.createAllItemsQuery();
+
+                    caml.set_viewXml("<View Scope='All'><Query></Query></View>");
+                    caml.set_folderServerRelativeUrl($scope.tabs[$scope.index].relativeUrl);
+                    $scope.allDocumentsCol = oLibDocs.getItems(caml);
+                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
+                    ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
+                        Function.createDelegate($scope, $scope.failed));
+                }
+
+
+                $scope.succeeded = function onSucceededCallback(sender, args) {
+
+                    var libList = "";
+                    var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
+                    while (ListEnumerator.moveNext()) {
+                        var currentItem = ListEnumerator.get_current();
+                        var currentItemURL = _spPageContextInfo
+                            .webServerRelativeUrl +
+                            currentItem.get_item('ServerUrl');
+                        var currentItemType = currentItem.get_item('FSObjType');
+
+                        var currentItemFileRef = currentItem.get_item('FileRef');
+                        var currentItemFileDirRef = currentItem.get_item('FileDirRef');
+
+                        var currentItemID = currentItem.get_item('ID');
+                        var currentItemGUID = currentItem.get_item('GUID');
+
+                        var currentItemGUID = currentItem.get_item('GUID');
+                        
+                        libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
+
+                        var guid = currentItemGUID.toString("B");
+                        $scope.fileItems.push(
+                        {
+                            "name": currentItem.get_item('FileLeafRef'),
+                            "type": currentItemType,
+                            "path": currentItemURL,
+                            "FileRef": currentItemFileRef,
+                            "FileDirRef": currentItemFileDirRef,
+                            "GUID": guid,
+                            "ID": currentItemID
+                            
+                        });
+                    }
+                    $scope.$apply();
+                }
+
+                $scope.failed = function onFailedCallback(sender, args) {
+                    alert("failed. Message:" + args.get_message());
+
+                }
+
+                $scope.$on('selectedEvent', function(event, args) {
+                    if(args == $scope.index) {selectedBufferService.addToBuffer($scope.selected, "tmp")};
+                });
+
+
+            }]);
+
     angular.module('Abs')
         .controller('MainCtrl',
         [
             '$scope', function ($scope) {
-
-
                 $scope.onstart = function () {
                     SP.SOD.executeFunc('SP.Runtime.js',
                         'SP.ClientContext',
@@ -365,6 +497,8 @@
             }
         ]);
 
+
+
     angular.module('Abs')
         .factory('bufferCtrl',
             function() {
@@ -405,119 +539,4 @@
             return methods;
         });
 
-    angular
-        .module('Abs')
-        .controller('tabContentController',
-            ['$scope', 'selectedBufferService', function ($scope, selectedBufferService) {
-                $scope.selection = true;
-                $scope.selected = [];
-                $scope.log = [];
-                $scope.index = "";
-                $scope.fileItems = [];
-
-                $scope.doubleClick = function() {
-                    //Tmp no check
-                    var item = $scope.selected[0];
-                    $scope.fileItems = [];
-
-                    //Not rewrite, no sence
-                    var url = $scope.tabs[$scope.index].url;
-
-
-                    $scope.getDir(url, item.GUID);
-
-                };
-
-                $scope.selectionStart = function() {
-                    $scope.log.push(($scope.log.length + 1) + ': selection start!');
-                };
-                $scope.selectionStop = function (selected) {
-                    selectedBufferService.addToBuffer(selected, "tmp");
-                    $scope.log.push(($scope.log.length + 1) + ': items selected: ' + selected.length);
-                };
-                $scope.onStart = function($index) {
-                    $scope.index = $index;
-                    var listId = $scope.tabs[$scope.index].title;
-                    var url = $scope.tabs[$scope.index].url;
-                    $scope.getDir(url, listId);
-                };
-
-
-                $scope.getDir = function documentQuery(url, ListId) {
-                    var ctx = new SP.ClientContext(url);
-                    var oLibDocs = ctx.get_web().get_lists().getById(ListId);
-                    var caml = SP.CamlQuery.createAllItemsQuery();
-                    caml.set_viewXml("<View Scope='All'><Query></Query></View>");
-                    $scope.allDocumentsCol = oLibDocs.getItems(caml);
-                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
-                    ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
-                        Function.createDelegate($scope, $scope.failed));
-                }
-
-
-                $scope.succeeded = function onSucceededCallback(sender, args) {
-                    var libList = "";
-                    var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
-                    while (ListEnumerator.moveNext()) {
-                        var currentItem = ListEnumerator.get_current();
-                        var currentItemURL = _spPageContextInfo
-                            .webServerRelativeUrl +
-                            currentItem.get_item('ServerUrl');
-                        var currentItemType = currentItem.get_item('FSObjType');
-
-                        var currentItemFileRef = currentItem.get_item('FileRef');
-                        var currentItemFileDirRef = currentItem.get_item('FileDirRef');
-
-                        var currentItemID = currentItem.get_item('ID');
-                        var currentItemGUID = currentItem.get_item('GUID');
-
-                        var currentItemGUID = currentItem.get_item('GUID');
-                        
-                        libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
-
-                        var guid = currentItemGUID.toString("B");
-                        $scope.fileItems.push(
-                        {
-                            "name": currentItem.get_item('FileLeafRef'),
-                            "type": currentItemType,
-                            "path": currentItemURL,
-                            "FileRef": currentItemFileRef,
-                            "FileDirRef": currentItemFileDirRef,
-                            "GUID": guid,
-                            "ID": currentItemID
-                            
-                        });
-                    }
-                    $scope.$apply();
-                }
-
-                $scope.failed = function onFailedCallback(sender, args) {
-                    alert("failed. Message:" + args.get_message());
-
-                }
-
-
-
-
-
-
-
-
-                $scope.$on('selectedEvent', function(event, args) {
-                    if(args == $scope.index) {selectedBufferService.addToBuffer($scope.selected, "tmp")};
-                });
-
-
-            }]);
-
-    angular.module('Abs').controller('tmpCtrl', ['$scope','selectedBufferService', '$log', function($scope, selectedBufferService, $log) {
-        $scope.model = [];
-
-        $scope.$log = $log;
-        $scope.message = selectedBufferService.getFBuffer();
-
-        $scope.refresh = function() {
-            return selectedBufferService.getFBuffer();
-        };
-    }]);
 })()

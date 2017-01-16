@@ -125,11 +125,7 @@
     <html lang="en" >
 
     <div>  
-        <ribbon-menu></ribbon-menu>
-        
-        <div ng-controller ="tmpCtrl">
-            <input type="button" ng-click="$log.log(refresh())" /> 
-        </div>
+        <ribbon-menu></ribbon-menu>        
         <div>
 <%--                <div ng-controller="TreeController">
 
@@ -143,15 +139,18 @@
            
             <div class = "col-sm-8" ng-controller="tabsCtrl">             
                <uib-tabset active="activeTab">
- <%--                  <uib-tab index="0" heading="Static title">
-                       <div ng-controller="MainCtrl">
-                           <br>
-                           <br>
-                           <div id="grid1" ui-grid="gridOpts" class="grid" ng-init="onstart()"></div>
-                       </div>
-                   </uib-tab>--%>
-                    <uib-tab index="$index" ng-repeat="tab in tabs" heading="{{tab.title}}" select="onSelection($index)" >                                              
+                    <uib-tab index="$index" ng-repeat="tab in tabs" select="onSelection($index)" >     
+                        <uib-tab-heading>
+                            {{tab.title}}
+                            <i type="button" ng-click="removeTab($index, $event)" class="glyphicon glyphicon-remove"> </i>
+                        </uib-tab-heading>                                         
                         <section ng-controller="tabContentController" ng-init="onStart($index)">
+                            <div>
+                                <div>
+                                   <input type="button" value ="Up" ng-click ="upBtnClicked()" />
+                                </div>
+                                <div></div>
+                            </div>
                             <p>
                                 You've selected:
                                 <span ng-hide="selected">none</span>
