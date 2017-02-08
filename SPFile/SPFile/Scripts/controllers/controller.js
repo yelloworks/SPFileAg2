@@ -288,6 +288,7 @@
                 $scope.log = [];
                 $scope.index = "";
                 $scope.fileItems = [];
+                $scope.upBtndisabled = false;
 
                 $scope.doubleClick = function() {
                     //Tmp no check
@@ -296,10 +297,12 @@
 
                     //Not rewrite, no sence
                    // var url = $scope.tabs[$scope.index].url;
-
+                    $scope.upBtndisabled = false;
                     $scope.tabs[$scope.index].title = item.name;
                     $scope.tabs[$scope.index].relativeUrl = item.FileRef;
-
+                    if ($scope.tabs[$scope.index].listId == "") {
+                        $scope.tabs[$scope.index].listId = item.libraryID;
+                    }
                     $scope.getDir();
 
                 };
@@ -312,6 +315,43 @@
                     return outItem;
                 };
 
+
+                
+                $scope.getLibrariesOnly = function () {
+                    var url = $scope.tabs[$scope.index].url;
+                    var currentcontext = new SP.ClientContext(url);
+                    var currentweb = currentcontext.get_web();
+                    $scope.listCollection = currentweb.get_lists();
+                    currentcontext.load($scope.listCollection);
+                    currentcontext.executeQueryAsync(Function.createDelegate($scope, librariesExecuteOnSuccess),
+                        Function.createDelegate($scope, librariiesExecuteOnFailure));
+                }
+
+                function librariesExecuteOnSuccess(sender, args) {
+                    var listEnumerator = $scope.listCollection.getEnumerator();
+                    var allLibs = "";
+                    while (listEnumerator.moveNext()) {
+                        var list = listEnumerator.get_current();
+
+                        if (list.get_baseTemplate() == '101') {
+                            $scope.fileItems.push({
+                                "name": list.get_title(),
+                                "FileRef": "\\" + list.get_title(),
+                                "libraryID": "{" + list.get_id() + "}"
+                            });
+                        }
+                    }
+                    $scope.$apply();
+                    // alert("All Libraries" + '\n' + allLibs);
+                }
+
+                function librariiesExecuteOnFailure(sender, args) {
+                    alert("Error in Getting Lists");
+                }
+
+
+                ///Переделать, вынести большую част операции в рожд контроллер, тут только проверку правильности оставить
+
                 $scope.upBtnClicked = function() {
                     var arrayPath = $scope.tabs[$scope.index].relativeUrl.split('/');
                     if (arrayPath.length > 2) {
@@ -320,6 +360,13 @@
                         $scope.tabs[$scope.index].relativeUrl = newRelativeUrl;
                         $scope.fileItems = [];
                         $scope.getDir();
+                    } else {
+                        $scope.fileItems = [];
+                        $scope.tabs[$scope.index].listId = "";
+                        $scope.tabs[$scope.index].title = $scope.tabs[$scope.index].url;
+                        $scope.tabs[$scope.index].relativeUrl = "";
+                        $scope.upBtndisabled = true;
+                        $scope.getLibrariesOnly();
                     }
             };
 

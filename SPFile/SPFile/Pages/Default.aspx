@@ -147,7 +147,7 @@
                         <section ng-controller="tabContentController" ng-init="onStart($index)">
                             <div>
                                 <div>
-                                   <input type="button" value ="Up" ng-click ="upBtnClicked()" />
+                                   <input type="button" value ="Up" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled" />
                                 </div>
                                 <div></div>
                             </div>
