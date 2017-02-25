@@ -243,7 +243,7 @@
                     if (sourceItems != []) {
 
                         sourceItems.forEach(function (item, i, arr) {
-                            fileOperations.CopyOrMove(sourceUrl,sourceListId,);
+                            //fileOperations.CopyOrMove(sourceUrl,sourceListId,);
                            // copyOrMove(sourceUrl, item.ID, sourceListId, distanationUrl, false, item.type);
 
                         });

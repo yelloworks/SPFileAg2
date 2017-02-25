@@ -26,11 +26,20 @@
     
     <script type="text/javascript" src="../Scripts/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="../Scripts/jquery-ui-1.12.1.min.js"></script>
-    <script type="text/javascript" src="../Scripts/angular.js"></script>
-    <script type="text/javascript" src="../Scripts/angular-animate.js"></script>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js" type="text/javascript"></script>
+    <%--<script type="text/javascript" src="../Scripts/angular.js"></script>--%>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js" type="text/javascript"></script>
+    <%--<script type="text/javascript" src="../Scripts/angular-animate.js"></script>--%>
+
     <script type="text/javascript" src="../Scripts/angular-recursion.js"> </script>
-    <script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>
-    <script type="text/javascript" src="../Scripts/angular-touch.js"></script>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js" type="text/javascript"></script>
+    <%--<script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>--%>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-touch.js" type="text/javascript"></script>
+    <%--<script type="text/javascript" src="../Scripts/angular-touch.js"></script>--%>
+    
+
     <script type="text/javascript" src="../Scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap.js"> </script>
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>   
