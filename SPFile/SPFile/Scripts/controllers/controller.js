@@ -570,7 +570,7 @@
 
     angular.module('Abs')
         .controller('tabsCtrl',
-            function($scope, $window,$timeout) {
+            function($scope, $window,$timeout, $q) {
                 $scope.tabs = [
 
                 ];
@@ -591,16 +591,35 @@
                     $scope.$broadcast('selectedEvent', $index);
                 };
 
+
+                function getSiteRootUrl(url) {
+                    var deferred = $q.defer();
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    ctx.load(web);
+                    ctx.executeQueryAsync(function (sender, args) {
+                        deferred.resolve(web.get_serverRelativeUrl());
+                    }, function (sender, args) {
+                        deferred.reject(sender, args);
+                    });
+                    return deferred.promise;
+                };
+
+               
                 var addNewWorkspace = function (url, listId, relativeUrl, folderName) {
-                    $scope.tabs.push({
-                        title: folderName,
-                        url: url,
-                        listId: listId,
-                        relativeUrl: relativeUrl
-                    });
-                    $timeout(function () {
-                        $scope.activeTab = $scope.tabs.length-1;
-                    });
+                    getSiteRootUrl(url)
+                        .then(function(relSiteUrl) {
+                            $scope.tabs.push({
+                                title: folderName,
+                                url: url,
+                                listId: listId,
+                                relativeUrl: relativeUrl,
+                                relativeSiteUrl: relSiteUrl
+                            });
+                            $timeout(function() {
+                                $scope.activeTab = $scope.tabs.length - 1;
+                            });
+                        });
                 };
 
                 $scope.addWorkspace = function () {
@@ -661,9 +680,7 @@
                     });
                     return outItem;
                 };
-
-
-                
+               
                 $scope.getLibrariesOnly = function () {
                     var url = $scope.tabs[$scope.index].url;
                     var currentcontext = new SP.ClientContext(url);
@@ -696,15 +713,18 @@
                     alert("Error in Getting Lists");
                 }
 
-
                 ///Переделать, вынести большую част операции в рожд контроллер, тут только проверку правильности оставить
 
-                $scope.upBtnClicked = function() {
-                    var arrayPath = $scope.tabs[$scope.index].relativeUrl.split('/');
+                $scope.upBtnClicked = function () {
+                    var siteRelativeUrl = "";
+                    if ($scope.tabs[$scope.index].relativeSiteUrl != '/') {
+                        siteRelativeUrl = $scope.tabs[$scope.index].relativeSiteUrl;
+                    };
+                    var arrayPath = $scope.tabs[$scope.index].relativeUrl.replace(siteRelativeUrl).split('/');
                     if (arrayPath.length > 2) {
                         var newRelativeUrl = getRelativeUrlString(arrayPath.slice(1, arrayPath.length - 1));
                         $scope.tabs[$scope.index].title = arrayPath.slice(arrayPath.length - 2)[0];
-                        $scope.tabs[$scope.index].relativeUrl = newRelativeUrl;
+                        $scope.tabs[$scope.index].relativeUrl = siteRelativeUrl + newRelativeUrl;
                         $scope.fileItems = [];
                         $scope.getDir();
                     } else {
@@ -793,6 +813,12 @@
                 }
 
                 $scope.failed = function onFailedCallback(sender, args) {
+                    $scope.fileItems = [];
+                    $scope.tabs[$scope.index].listId = "";
+                    $scope.tabs[$scope.index].title = "root";
+                    $scope.tabs[$scope.index].relativeUrl = "";
+                    $scope.upBtndisabled = true;
+                    $scope.getLibrariesOnly();
                     alert("failed. Message:" + args.get_message());
 
                 }
@@ -971,7 +997,9 @@
             return methods;
         });
 
-    angular.module('Abs').factory('fileOperations', function($q, $log) {
+    angular.module('Abs')
+        .factory('fileOperations',
+        function ($q, $log) {
         var methods = {};
 
 
