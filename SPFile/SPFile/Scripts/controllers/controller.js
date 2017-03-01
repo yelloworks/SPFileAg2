@@ -177,8 +177,6 @@
                         'SP.ClientContext',
                         function() {
                             var ListId = GetUrlKeyValue("SPListId");
-
-
                             var ItemId = GetUrlKeyValue("SPItemId");
                             var ItemUrl = GetUrlKeyValue("SPItemUrl");
                             var SiteUrl = GetUrlKeyValue("SPSiteUrl");
@@ -231,21 +229,21 @@
             ['$scope', 'selectedBufferService', 'bufferCtrl', '$log', 'fileOperations', function ($scope, selectedBufferService, bufferCtrl, $log, fileOperations) {
 
                 $scope.copyBtnClicked = function () {
-                    bufferCtrl.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getUrl);
+                    bufferCtrl.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getUrl(),selectedBufferService.getlistID(), selectedBufferService.getRelativeUrl());
                     
 
                 };
                 $scope.pasteBtnClicked = function() {
                     var sourceItems = bufferCtrl.getFBuffer();
-                    var sourceUrl = buffer.getFUrl();
-                    var sourceListId = buffer.getFListId;
-                    var distanationUrl = ""; // нужно как то его получить
+                    var sourceUrl = bufferCtrl.getFUrl();
+                    var sourceListId = bufferCtrl.getFListId();
+                    var sourceRelativeUrl = bufferCtrl.getFRelativeUrl();
+                    var destinationUrl = selectedBufferService.getRelativeUrl(); // нужно как то его получить
+                    var destinationListId = selectedBufferService.getlistID();
                     if (sourceItems != []) {
-
                         sourceItems.forEach(function (item, i, arr) {
-                            //fileOperations.CopyOrMove(sourceUrl,sourceListId,);
-                           // copyOrMove(sourceUrl, item.ID, sourceListId, distanationUrl, false, item.type);
-
+                            fileOperations.CopyOrMove(sourceUrl, sourceListId, sourceRelativeUrl, item[i].ID, destinationUrl, destinationListId, item[i].type, false);
+                           // copyOrMove(sourceUrl, item.ID, sourceListId, destinationUrl, false, item.type);
                         });
                     }
                     //filesOperations.CopyOrMove();
@@ -472,7 +470,6 @@
 
                 };
 
-
                 function createFolder (url, listId, folderUrl, success, error) {
                     var ctx = new SP.ClientContext(url);
                     var list = ctx.get_web().get_lists().getById(listId);
@@ -494,7 +491,6 @@
                     };
                     createFolderInternal(list.get_rootFolder(), folderUrl, success, error);
                 };
-
 
                 function copyOrMove(url, fileId, sourceLibrary, destLibrary, moveFile, type) {
                     var ctx = new SP.ClientContext(url);
@@ -531,7 +527,6 @@
                     );
                 }
 
-
                 function getListTitle(url, listId) {
                     var currentcontext = new SP.ClientContext(url);
                     var currentweb = currentcontext.get_web();
@@ -546,7 +541,6 @@
 
                         });
                 };
-
 
             }]);
 
@@ -566,7 +560,6 @@
 
                 $scope.appendToEl = angular.element(document.querySelector('#dropdown-long-content'));
             });
-
 
     angular.module('Abs')
         .controller('tabsCtrl',
@@ -926,7 +919,6 @@
     */
 
 
-
     //Servisies
     angular.module('Abs')
         .factory('bufferCtrl',
@@ -936,16 +928,18 @@
                 var buffer = [];
                 var url = "";
                 var listId = '';
+                var relativeUrl = '';
 
                 methods.addToBuffer = function(item) {
                     buffer = [];
                     buffer.push(item);
                 };
-                methods.setBuffer = function(item, relUrl, lstId) {
+                methods.setBuffer = function (item, fullUrl, lstId, relUrl) {
                     buffer = [];
                     buffer = item;
-                    url = relUrl;
+                    url = fullUrl;
                     listId = lstId;
+                    relativeUrl = relUrl;
                 }
 
                 methods.getFBuffer = function() {
@@ -956,6 +950,9 @@
                 };
                 methods.getFListId = function() {
                     return listId;
+                };
+                methods.getFRelativeUrl = function() {
+                    return relativeUrl;
                 };
 
                 return methods;
@@ -1003,7 +1000,7 @@
         var methods = {};
 
 
-        var allDocumentsCol = "";
+        //var allDocumentsCol = "";
         var url = "";
         var listId = "";
         var relativeUrl = "";
@@ -1024,17 +1021,48 @@
                 copyFolder();
             }
         };
-        function copyFolder() {
+        function copyFolder(url, ) {
             var ctx = new SP.ClientContext(url);
             var oLibDocs = ctx.get_web().get_lists().getById(listId);
             var caml = SP.CamlQuery.createAllItemsQuery();
-            allDocumentsCol = "";
+            var allDocumentsCol = "";
             caml.set_viewXml("<View Scope='RecursiveAll'><Query><Where><Eq><FieldRef Name='FSObjType' /><Value Type='Integer'>0</Value></Eq></Where></Query></View>");
             caml.set_folderServerRelativeUrl(relativeUrl);
             allDocumentsCol = oLibDocs.getItems(caml);
             ctx.load(allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
-            ctx.executeQueryAsync(Function.createDelegate(methods, methods.succeeded),
-                Function.createDelegate(methods, methods.failed));
+            ctx.executeQueryAsync(function (sender, args) {
+                var ListEnumerator = allDocumentsCol.getEnumerator();
+                while (ListEnumerator.moveNext()) {
+                    var currentItem = ListEnumerator.get_current();
+                    var currentItemFileDirRef = currentItem.get_item('FileDirRef');
+                    var currentItemID = currentItem.get_item('ID');
+                    var tmpPath = relativeUrl.split('/');
+                    var cutPath = "/" + tmpPath.slice(0, tmpPath.length - 1).join('/') + "/";
+                    var relUrlArray = destenationRelUrl.split('/');
+                    var destUrl = relUrlArray.slice(1, relUrlArray.length).join('/');
+                    var newFolder = destUrl + currentItemFileDirRef.replace(cutPath, "");
+                    var tmpValue = createFolder(destenationListId,
+                            newFolder,
+                            function (folder) {
+
+                                $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
+                            },
+                            function (sender, args) {
+                                $log.log(args.get_message());
+                            })
+                        .finally(function () {
+                            copyOrMoveFile(currentItemID, destenationRelUrl + "/" + newFolder);
+                        });
+
+                    $log.log(currentItem.get_item('FileLeafRef') + currentItemFileDirRef);
+
+                }
+
+            },
+                function onFailedCallback(sender, args) {
+                    alert("failed. Message:" + args.get_message());
+
+                });
         }
         var createFolder = function (listId, folderUrl, success, error) {
             var deferred = $q.defer();
@@ -1101,32 +1129,16 @@
                 }
             );
         }
+
         methods.succeeded = function onSucceededCallback(sender, args) {
-            //var libList = "";
+ 
             var ListEnumerator = allDocumentsCol.getEnumerator();
             while (ListEnumerator.moveNext()) {
                 var currentItem = ListEnumerator.get_current();
-
                 var currentItemFileDirRef = currentItem.get_item('FileDirRef');
-                var currentItemID = currentItem.get_item('ID');
-                /*
-                                    //var currentItemList = currentItem.get_item('List');
-                
-                                    //var currentItemURL = _spPageContextInfo
-                                    //    .webServerRelativeUrl +
-                                    //    currentItem.get_item('ServerUrl');
-                                    //var currentItemType = currentItem.get_item('FSObjType');
-                                    //var currentItemFileRef = currentItem.get_item('FileRef');
-                
-                                    //var currentItemGUID = currentItem.get_item('GUID');
-                                    //var guid = currentItemGUID.toString("B");
-                
-                                   // libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
-                
-                   */
+                var currentItemID = currentItem.get_item('ID');            
                 var tmpPath = relativeUrl.split('/');
                 var cutPath = "/" + tmpPath.slice(0, tmpPath.length - 1).join('/') + "/";
-
                 var relUrlArray = destenationRelUrl.split('/');
                 var destUrl = relUrlArray.slice(1, relUrlArray.length).join('/');
                 var newFolder = destUrl + currentItemFileDirRef.replace(cutPath, "");
@@ -1145,19 +1157,8 @@
 
                 $log.log(currentItem.get_item('FileLeafRef') + currentItemFileDirRef);
 
-                //$scope.fileItems.push(
-                //{
-                //    "name": currentItem.get_item('FileLeafRef'),
-                //    "type": currentItemType,
-                //    "path": currentItemURL,
-                //    "FileRef": currentItemFileRef,
-                //    "FileDirRef": currentItemFileDirRef,
-                //    "GUID": guid,
-                //    "ID": currentItemID
-
-                //});
             }
-           // $scope.$apply();
+
         }
         methods.failed = function onFailedCallback(sender, args) {
             alert("failed. Message:" + args.get_message());
