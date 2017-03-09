@@ -460,9 +460,9 @@
                         var newRelativeUrl = getRelativeUrlString(arrayPath.slice(1, arrayPath.length - 1));
                         $scope.tabs[$scope.index].title = arrayPath.slice(arrayPath.length - 2)[0];
                         $scope.tabs[$scope.index].relativeUrl = siteRelativeUrl + newRelativeUrl;
-                        $scope.fileItems = [];
-                        selectedBufferService.addToBuffer(selected, $scope.tabs[$scope.index].listId, $scope.tabs[$scope.index].url, $scope.tabs[$scope.index].relativeUrl);
+                        $scope.fileItems = [];                       
                         $scope.getDir();
+                        selectedBufferService.addToBuffer(selected, $scope.tabs[$scope.index].listId, $scope.tabs[$scope.index].url, $scope.tabs[$scope.index].relativeUrl);
                     } else {
                         $scope.fileItems = [];
                         $scope.tabs[$scope.index].listId = "";
@@ -566,101 +566,6 @@
 
             }]);
 
-    //mainCtrl not needed
-    /*angular.module('Abs')
-        .controller('MainCtrl',
-        [
-            '$scope', function ($scope) {
-                $scope.onstart = function () {
-                    SP.SOD.executeFunc('SP.Runtime.js',
-                        'SP.ClientContext',
-                        function () {
-                            SP.SOD.executeFunc('SP.js',
-                                'SP.ClientContext',
-                                function () {
-                                    var ListId = GetUrlKeyValue("SPListId");
-                                    var HostUrl = GetUrlKeyValue("SPHostUrl");
-                                    var SiteUrl = GetUrlKeyValue("SPSiteUrl");
-                                    var Source = GetUrlKeyValue("SPSource");
-
-
-                                    var url = window.location.protocol +
-                                        "//" +
-                                        window.location.host +
-                                        _spPageContextInfo.siteServerRelativeUrl;
-
-
-                                    if (ListId != "") {
-                                        $scope.getDir(url, ListId);
-                                    } else {
-                                        //Временно нацелена на локальные Документы
-                                        $scope.getDir(url, '{38405EBF-043B-4CE5-9440-744C20169CC0}');
-                                    }
-
-                                });
-
-
-                        });
-                };
-
-                var columnDefs1 = [
-                    { name: 'Name' },
-                    { name: 'Type' },
-                    { name: 'Path' },
-                ];
-
-                var data1 = [
-                ];
-
-
-                $scope.gridOpts = {
-                    columnDefs: columnDefs1,
-                    data: data1
-                };
-
-
-                $scope.getDir = function documentQuery(url, ListId) {
-                    var ctx = new SP.ClientContext(url);
-                    var oLibDocs = ctx.get_web().get_lists().getById(ListId);
-                    var caml = SP.CamlQuery.createAllItemsQuery();
-                    caml.set_viewXml("<View Scope='All'><Query></Query></View>");
-                    $scope.allDocumentsCol = oLibDocs.getItems(caml);
-                    ctx.load($scope.allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType )");
-                    ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
-                        Function.createDelegate($scope, $scope.failed));
-                }
-
-
-                $scope.succeeded = function onSucceededCallback(sender, args) {
-                    var libList = "";
-                    var ListEnumerator = $scope.allDocumentsCol.getEnumerator();
-                    while (ListEnumerator.moveNext()) {
-                        var currentItem = ListEnumerator.get_current();
-                        var currentItemURL = _spPageContextInfo
-                            .webServerRelativeUrl +
-                            currentItem.get_item('ServerUrl');
-                        var currentItemType = currentItem.get_item('FSObjType');
-                        libList += currentItem.get_item('FileLeafRef') + ' : ' + currentItemType + '\n';
-                        $scope.gridOpts.data.push(
-                        {
-                            "Name": currentItem.get_item('FileLeafRef'),
-                            "Type": currentItemType,
-                            "Path": currentItemURL
-                        });
-                    }
-                    $scope.$apply();
-                }
-
-                $scope.failed = function onFailedCallback(sender, args) {
-                    alert("failed. Message:" + args.get_message());
-
-                }
-
-            }
-        ]);
-
-    */
-
 
     //Servisies
     angular.module('Abs')
@@ -743,12 +648,12 @@
         var methods = {};
 
 
-        var allDocumentsCol = "";
+       // var allDocumentsCol = "";
         var url = "";
-        var listId = "";
-        var relativeUrl = "";
-        var destenationRelUrl = "";
-        var destenationListId = "";
+        //var listId = "";
+       // var relativeUrl = "";
+       // var destenationRelUrl = "";
+       // var destenationListId = "";
         var moveItem;
 
         methods.CopyOrMove = function (itemUrl, sourceListId, sourceRelativeUrl, soutceItemId, destRelativeUrl, destListId, objectType, itemName, move) {
@@ -756,31 +661,65 @@
             if (url.charAt(url.length - 1) == '/') {
                 url = url.slice(0,-1);
             }
-            listId = sourceListId;
-            relativeUrl = removeFirstSlash(sourceRelativeUrl);
-            destenationListId = destListId;//'{e9af8f1f-dc7c-4869-ba66-77daa1080c33}'; //временно нацелен на temp         
-            destenationRelUrl = removeFirstSlash(destRelativeUrl); //"temp/";
+            var listId = sourceListId;
+            //relativeUrl = removeFirstSlash(sourceRelativeUrl);
+            var destenationListId = destListId;//'{e9af8f1f-dc7c-4869-ba66-77daa1080c33}'; //временно нацелен на temp         
+            var destenationRelUrl = removeFirstSlash(destRelativeUrl); //"temp/";
 
             moveItem = move;
             if (objectType == 0) {
-                copyOrMoveFile(soutceItemId, destenationRelUrl);
+                copyOrMoveFile(soutceItemId, destenationRelUrl, listId);
             } else {
-                relativeUrl = relativeUrl + "/" + itemName;
-                copyFolder();
+               // relativeUrl = ;
+                copyFolder(listId, removeFirstSlash(sourceRelativeUrl) + "/" + itemName, destenationListId, destenationRelUrl);
             }
         };
 
-        function copyFolder() {
-            var ctx = new SP.ClientContext(url);
-            var oLibDocs = ctx.get_web().get_lists().getById(listId);
-            var caml = SP.CamlQuery.createAllItemsQuery();
-            caml.set_viewXml("<View Scope='RecursiveAll'><Query><Where><Eq><FieldRef Name='FSObjType' /><Value Type='Integer'>0</Value></Eq></Where></Query></View>");
-            caml.set_folderServerRelativeUrl(relativeUrl);
-            allDocumentsCol = oLibDocs.getItems(caml);
-            ctx.load(allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
-            ctx.executeQueryAsync(Function.createDelegate(methods, methods.succeeded),
-                Function.createDelegate(methods,methods.failed));
-        }
+        function copyFolder(listId, relativeUrl, destenationListId, destenationRelUrl) {
+                var ctx = new SP.ClientContext(url);
+                var oLibDocs = ctx.get_web().get_lists().getById(listId);
+                var caml = SP.CamlQuery.createAllItemsQuery();
+                caml.set_viewXml("<View Scope='RecursiveAll'><Query><Where><Eq><FieldRef Name='FSObjType' /><Value Type='Integer'>0</Value></Eq></Where></Query></View>");
+                caml.set_folderServerRelativeUrl(relativeUrl);
+                var allDocumentsCol = oLibDocs.getItems(caml);
+               // var destRootFolder = ctx.get_web().get_list().getById(destenationListId);
+               // ctx.load(destRootFolder);
+                ctx.load(allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
+                ctx.executeQueryAsync(function(sender, args) {
+                        var listEnumerator = allDocumentsCol.getEnumerator();
+                        while (listEnumerator.moveNext()) {
+                            var currentItem = listEnumerator.get_current();
+                            var currentItemFileDirRef = currentItem.get_item('FileDirRef');
+                            var currentItemId = currentItem.get_item('ID');
+                            var tmpPath = relativeUrl.split('/');
+                            var cutPath = "/" + tmpPath.slice(0, tmpPath.length - 1).join('/') + "/";
+                            var relUrlArray = destenationRelUrl.split('/');
+                            var destUrl = relUrlArray.slice(1, relUrlArray.length).join('/');
+                            var newFolder = destUrl + '/' + currentItemFileDirRef.replace(cutPath, "");
+                            newFolder = removeFirstSlash(newFolder);
+                            var tmpValue = createFolder(destenationListId,
+                                    newFolder,
+                                    function(folder) {
+
+                                        $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
+                                    },
+                                    function(sender, args) {
+                                        $log.log(args.get_message());
+                                    },
+                                    currentItemId,
+                                    destenationRelUrl)
+                                .then(function(args) {
+                                    copyOrMoveFile(args[0], args[1] + "/" + args[2], listId);
+                                });
+
+                            $log.log(currentItem.get_item('FileLeafRef') + currentItemFileDirRef);
+                        }
+
+                    },
+                    function(sender, args) {
+                        alert("failed. Message:" + args.get_message());
+                    });
+            }
 
 
 /*
@@ -820,6 +759,8 @@
             var deferred = $q.defer();
             var ctx = new SP.ClientContext(url);
             var list = ctx.get_web().get_lists().getById(listId);
+            var rootFolder = list.get_rootFolder();
+            ctx.load(rootFolder);
             var createFolderInternal = function (parentFolder, folderUrl, success, error) {
                 var ctx = parentFolder.get_context();
                 var curFolder = parentFolder;
@@ -831,7 +772,8 @@
                 ctx.executeQueryAsync(
                         function () {
                             success(curFolder);
-                            var args = [currentItemId, folderUrl, destenationRelUrl];
+                            
+                            var args = [currentItemId, removeFirstSlash(rootFolder.get_serverRelativeUrl()), folderUrl];
                             deferred.resolve(args);
                         },
                         function (sender, args) {
@@ -844,7 +786,7 @@
             return deferred.promise;
         };
 
-        function copyOrMoveFile(fileId, destanationPath) {
+        function copyOrMoveFile(fileId, destanationPath, listId) {
             var ctx = new SP.ClientContext(url);
             var web = ctx.get_web();
             var currentLib = web.get_lists().getById(listId);
@@ -878,7 +820,7 @@
                 }
             );
         }
-
+/*
         methods.succeeded = function onSucceededCallback(sender, args) {
  
             var listEnumerator = allDocumentsCol.getEnumerator();
@@ -913,18 +855,22 @@
             alert("failed. Message:" + args.get_message());
 
         }
-        methods.createNewFolder = function (itemUrl, destListId, folderUrl) {
-            url = itemUrl;
-            createFolder(destListId,
-                folderUrl,
-                function (folder) {
+*/
 
-                    $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
-                },
-                function (sender, args) {
-                    $log.log(args.get_message());
-                },"","");
-        };
+            methods.createNewFolder = function(itemUrl, destListId, folderUrl) {
+                url = itemUrl;
+                createFolder(destListId,
+                    folderUrl,
+                    function(folder) {
+
+                        $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
+                    },
+                    function(sender, args) {
+                        $log.log(args.get_message());
+                    },
+                    "",
+                    "");
+            };
 
         function removeFirstSlash(item) {
             var curItem = item;
