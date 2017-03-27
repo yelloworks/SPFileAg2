@@ -243,12 +243,12 @@
                     var destinationListId = selectedBufferService.getlistID();
                     if (sourceItems[0] != []) {
                         sourceItems[0].forEach(function (item, i, arr) {
-                            fileOperations.CopyOrMove(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, destinationUrl, destinationListId, item.type, item.name, false);
+                            fileOperations.CopyOrMove(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, destinationUrl, destinationListId, item.type, item.name, true);
                            // copyOrMove(sourceUrl, item.ID, sourceListId, destinationUrl, false, item.type);
                         });
                         
                     }
-                    downloadFile();
+                   // downloadFile();
 
                 };
                 $scope.cutBtnClicked = function() { 
@@ -644,6 +644,7 @@
             return methods;
         });
 
+
     angular.module('Abs')
         .factory('fileOperations',
         function ($q, $log) {
@@ -652,7 +653,7 @@
         var url = "";
         //var moveItem;
 
-        methods.CopyOrMove = function (itemUrl, sourceListId, sourceRelativeUrl, soutceItemId, destRelativeUrl, destListId, objectType, itemName, move) {
+        methods.CopyOrMove = function (itemUrl, sourceListId, sourceRelativeUrl, soutceItemId, destRelativeUrl, destListId, objectType, itemName, moveItem) {
             url = itemUrl;
             if (url.charAt(url.length - 1) == '/') {
                 url = url.slice(0,-1);
@@ -666,11 +667,11 @@
             if (objectType == 0) {
                 copyOrMoveFile(soutceItemId, destenationRelUrl, listId, moveItem);
             } else {
-                copyFolder(listId, removeFirstSlash(sourceRelativeUrl) + "/" + itemName, destenationListId, destenationRelUrl);
+                copyOrMoveFolder(listId, removeFirstSlash(sourceRelativeUrl) + "/" + itemName, destenationListId, destenationRelUrl, soutceItemId, moveItem);
             }
         };
 
-        function copyFolder(listId, relativeUrl, destenationListId, destenationRelUrl) {
+        function copyOrMoveFolder(listId, relativeUrl, destenationListId, destenationRelUrl,folderId, move) {
             var deferred = $q.defer();
                 var ctx = new SP.ClientContext(url);
                 var oLibDocs = ctx.get_web().get_lists().getById(listId);
@@ -680,7 +681,8 @@
                 var allDocumentsCol = oLibDocs.getItems(caml);
                 ctx.load(allDocumentsCol, "Include(FileLeafRef, ServerUrl, FSObjType, FileRef, FileDirRef, ID, GUID )");
                 ctx.executeQueryAsync(function(sender, args) {
-                        var listEnumerator = allDocumentsCol.getEnumerator();
+                    var listEnumerator = allDocumentsCol.getEnumerator();
+                        var fileListInfo = [];
                         while (listEnumerator.moveNext()) {
                             var currentItem = listEnumerator.get_current();
                             var currentItemFileDirRef = currentItem.get_item('FileDirRef');
@@ -691,22 +693,37 @@
                             var destUrl = relUrlArray.slice(1, relUrlArray.length).join('/');
                             var newFolder = destUrl + '/' + currentItemFileDirRef.replace(cutPath, "");
                             newFolder = removeFirstSlash(newFolder);
-                            createFolder(destenationListId,
-                                    newFolder,
-                                    function(folder) {
-                                        $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
-                                    },
-                                    function(sender, args) {
-                                        $log.log(args.get_message());
-                                    },
-                                    currentItemId,
-                                    destenationRelUrl)
-                                .then(function(args) {
-                                    copyOrMoveFile(args[0], args[1] + "/" + args[2], listId, false); //Пока только копирует
-                                });
+                            fileListInfo.push({
+                                "destenationListId": destenationListId,
+                                "newFolder": newFolder,
+                                "currentItemId": currentItemId,
+                                "destenationRelUrl": destenationRelUrl,
+                                "listId": listId,
+                                "move": move
+                            });
 
-                            $log.log(currentItem.get_item('FileLeafRef') + currentItemFileDirRef);
+                            //Тут начилось форменное безумие
+                            //createFolder(destenationListId,
+                            //        newFolder,
+                            //        function(folder) {
+                            //            $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
+                            //        },
+                            //        function(sender, args) {
+                            //            $log.log(args.get_message());
+                            //        },
+                            //        currentItemId,
+                            //        destenationRelUrl)
+                            //    .then(function(args) {
+                            //        copyOrMoveFile(args[0], args[1] + "/" + args[2], listId, false); //Пока только копирует
+                            //    });
+
+                            //$log.log(currentItem.get_item('FileLeafRef') + currentItemFileDirRef);
                         }
+                        asyncCopyFolder(fileListInfo).finally(function() {
+                            if (move) {
+                                 deleteItem(url, listId, folderId);
+                            };
+                        });
 
                     },
                     function(sender, args) {
@@ -729,9 +746,9 @@
                         file.currentItemId,
                         file.destenationRelUrl)
                     .then(function(args) {
-                        copyOrMoveFile(args[0], args[1] + "/" + args[2], listId, file.move), then(function() {
+                        copyOrMoveFile(args[0], args[1] + "/" + args[2], file.listId, file.move). then(function() {
                             defered.resolve();
-                        }); //Пока только копирует
+                        }); 
                     });
                 return defered.promise;
             });
@@ -739,7 +756,7 @@
 
         }
 
-            function createFolder (listId, folderUrl, success, error, currentItemId, destenationRelUrl) {
+        function createFolder (listId, folderUrl, success, error, currentItemId, destenationRelUrl) {
             var deferred = $q.defer();
             var ctx = new SP.ClientContext(url);
             var list = ctx.get_web().get_lists().getById(listId);
@@ -788,7 +805,7 @@
 
                         ctx.executeQueryAsync(
                             function (sender, args) {
-                                alert("File copied.");
+                                $log.log("File copied.");
                                 deferred.resolve();
                             },
                             function (sender, args) {
