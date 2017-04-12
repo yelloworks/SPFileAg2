@@ -223,70 +223,174 @@
                 });
         });
 
-    
+    angular.module('Abs')
+        .controller('MainInterface',
+            function($scope) {
+                $scope.disabledButtons = {
+                    paste: true,
+                    copy: true,
+                    cut: true,
+                    addfolder: true,
+                    lock: true,
+                    unlock: true,
+                    discardCheckout: true,
+                    editMetadata: true,
+                    permissions: true,
+                    download: true,
+                    upload: true,
+                    del: true
+                };
+
+
+                $scope.setAllButtonsEnabled = function() {
+                    $scope.disabledButtons.paste = false;
+                    $scope.disabledButtons.copy = false;
+                    $scope.disabledButtons.cut = false;
+                    $scope.disabledButtons.addfolder = false;
+                    $scope.disabledButtons.lock = false;
+                    $scope.disabledButtons.unlock = false;
+                    $scope.disabledButtons.discardCheckout = false;
+                    $scope.disabledButtons.editMetadata = false;
+                    $scope.disabledButtons.permissions = false;
+                    $scope.disabledButtons.download = false;
+                    $scope.disabledButtons.upload = false;
+                    $scope.disabledButtons.del = false;
+                    $scope.blockedButtons();
+                };
+
+                $scope.setAllButtonsDisabled = function() {
+                    $scope.disabledButtons.paste = true;
+                    $scope.disabledButtons.copy = true;
+                    $scope.disabledButtons.cut = true;
+                    $scope.disabledButtons.addfolder = true;
+                    $scope.disabledButtons.lock = true;
+                    $scope.disabledButtons.unlock = true;
+                    $scope.disabledButtons.discardCheckout = true;
+                    $scope.disabledButtons.editMetadata = true;
+                    $scope.disabledButtons.permissions = true;
+                    $scope.disabledButtons.download = true;
+                    $scope.disabledButtons.upload = true;
+                    $scope.disabledButtons.del = true;
+                };
+
+                $scope.blockedButtons = function () {
+                    $scope.disabledButtons.lock = true;
+                    $scope.disabledButtons.unlock = true;
+                    $scope.disabledButtons.editMetadata = true;
+                    $scope.disabledButtons.permissions = true;
+                    $scope.disabledButtons.download = true;
+                    $scope.disabledButtons.upload = true;
+                };
+            });
 
     angular.module('Abs')
         .controller('RibbonButtonsCtrl',
-            ['$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', function ($scope, selectedBufferService, bufferService, $log, fileOperations) {
+            ['$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', '$uibModal', function ($scope, selectedBufferService, bufferService, $log, fileOperations, $uibModal, checkOperations) {
 
-                $scope.copyBtnClicked = function () {
-                    bufferService.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getUrl(),selectedBufferService.getlistID(), selectedBufferService.getRelativeUrl());
-                    
-
+                $scope.copyBtnClicked = function() {
+                    bufferService.setBuffer(selectedBufferService.getBuffer(),
+                        selectedBufferService.getUrl(),
+                        selectedBufferService.getlistID(),
+                        selectedBufferService.getRelativeUrl(),
+                        false);
                 };
+
                 $scope.pasteBtnClicked = function() {
                     var sourceItems = bufferService.getFBuffer();
                     var sourceUrl = bufferService.getFUrl();
                     var sourceListId = bufferService.getFListId();
                     var sourceRelativeUrl = bufferService.getFRelativeUrl();
+                    var isCuted = bufferService.isCuted();
                     var destinationUrl = selectedBufferService.getRelativeUrl(); // нужно как то его получить
                     var destinationListId = selectedBufferService.getlistID();
-                    if (sourceItems[0] != []) {
+                    if (sourceItems[0].length != 0) {
                         sourceItems[0].forEach(function (item, i, arr) {
-                            fileOperations.CopyOrMove(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, destinationUrl, destinationListId, item.type, item.name, true);
-                           // copyOrMove(sourceUrl, item.ID, sourceListId, destinationUrl, false, item.type);
+                            fileOperations.CopyOrMove(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, destinationUrl, destinationListId, item.type, item.name, isCuted);
                         });
                         
                     }
-                   // downloadFile();
-
                 };
-                $scope.cutBtnClicked = function() { 
 
+                $scope.cutBtnClicked = function() { 
+                    bufferService.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getUrl(), selectedBufferService.getlistID(), selectedBufferService.getRelativeUrl(), false);
                 };
 
                 $scope.addFolderBtnClicked = function() {
-
-
                     var url = selectedBufferService.getUrl();
-                    var it = selectedBufferService.getRelativeUrl().split('/');
-                    var itnew = it.slice(2, it.length);
-                    itnew.push("New Folder"); // вот тут имя папки
-                    var relativeUrl = itnew.join('/');
-                  
                     var listId = selectedBufferService.getlistID();
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'folderNameModal.html',
+                        controller: 'ModalInstanceCtrl',
+                        controllerAs: '$ctrl'
 
+                    });
+                    modalInstance.result.then(function (folderName) {                       
+                        var it = selectedBufferService.getRelativeUrl().split('/');
+                        var itnew = it.slice(2, it.length);
+                        itnew.push(folderName); // вот тут имя папки
+                        var relativeUrl = itnew.join('/');
 
-                    fileOperations.createNewFolder(url, listId, relativeUrl);
+                        fileOperations.createNewFolder(url, listId, relativeUrl);
+                        
+                    }, function () {
+                        $log.info('Modal dismissed at: ' + new Date());
+                    });
+
 
                 };
-              
-                function getListTitle(url, listId) {
-                    var currentcontext = new SP.ClientContext(url);
-                    var currentweb = currentcontext.get_web();
-                    var listCollection = currentweb.get_lists().getById(listId);;
-                    currentcontext.load(listCollection);
-                    currentcontext.executeQueryAsync(function (sender, args) {
-                        //var listEnumerator = listCollection.getEnumerator();
-                        //var list = listEnumerator.get_current();
-                        var title = listCollection.get_title();
-                    },
-                        function (sender, args) {
+
+                $scope.discardCheckoutBtnClicked = function () {
+                    var sourceItems = selectedBufferService.getBuffer();
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+                    var sourceRelativeUrl = selectedBufferService.getRelativeUrl();
+
+                    if (sourceItems[0].length != 0) {
+                        sourceItems[0].forEach(function (item, i, arr) {
+                            checkOperations.undoCheckOut(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, item.type);
 
                         });
+
+                    }
                 };
 
+                $scope.deleteBtnClicked = function() {
+                    deleteForEachSelected(fileOperations.deleteItem);
+                };
+
+                $scope.deletePermanentBtnClicked = function() {
+                    deleteForEachSelected(fileOperations.deleteItemToRecycle);
+                };
+
+                function deleteForEachSelected(method) {
+                    var sourceItems = selectedBufferService.getBuffer();
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+
+                    if (sourceItems[0].length != 0) {
+                        sourceItems[0].forEach(function (item, i, arr) {
+                            method(sourceUrl, sourceListId, item.ID);
+
+                        });
+
+                    }
+                }
+
             }]);
+
+    angular.module('Abs')
+        .controller('ModalInstanceCtrl',
+            function($uibModalInstance) {
+                var $ctrl = this;
+                $ctrl.text = "New Folder";
+                $ctrl.ok = function() {
+                    $uibModalInstance.close($ctrl.text);
+                };
+                $ctrl.cancel = function() {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            });
 
     angular.module('Abs')
         .controller('DropdownCtrl',
@@ -314,17 +418,16 @@
                 $scope.activeTab = 0;
 
 
-                $scope.alertMe = function() {
+               /* $scope.alertMe = function() {
                     setTimeout(function() {
                         $window.alert('You\'ve selected the alert tab!');
                     });
-                };
+                };*/
                 $scope.model = {
                     name: 'Tabs'
                 };
 
                 $scope.onSelection = function ($index) {
-
                     $scope.$broadcast('selectedEvent', $index);
                 };
 
@@ -392,22 +495,31 @@
                 $scope.index = "";
                 $scope.fileItems = [];
                 $scope.upBtndisabled = false;
+                $scope.adressArray = [];
 
                 $scope.doubleClick = function() {
                     //Tmp no check
                     var item = $scope.selected[0];
-                    $scope.fileItems = [];
+                    
 
                     //Not rewrite, no sence
-                   // var url = $scope.tabs[$scope.index].url;
-                    $scope.upBtndisabled = false;
-                    $scope.tabs[$scope.index].title = item.name;
-                    $scope.tabs[$scope.index].relativeUrl = item.FileRef;
-                    if ($scope.tabs[$scope.index].listId == "") {
-                        $scope.tabs[$scope.index].listId = item.libraryID;
-                    }
-                    $scope.getDir();
-                    selectedBufferService.addToBuffer($scope.selected, $scope.tabs[$scope.index].listId, $scope.tabs[$scope.index].url, $scope.tabs[$scope.index].relativeUrl);
+                    // var url = $scope.tabs[$scope.index].url;
+                    if (item.type != 0) {
+                        $scope.fileItems = [];
+                        $scope.upBtndisabled = false;
+                        $scope.tabs[$scope.index].title = item.name;
+                        $scope.tabs[$scope.index].relativeUrl = item.FileRef;
+                        if ($scope.tabs[$scope.index].listId == "") {
+                            $scope.tabs[$scope.index].listId = item.libraryID;
+                        }
+                        $scope.getDir();
+                        $scope.selected = [];
+                        $scope.adressArray = getAdressArray();
+                        selectedBufferService.addToBuffer($scope.selected,
+                            $scope.tabs[$scope.index].listId,
+                            $scope.tabs[$scope.index].url,
+                            $scope.tabs[$scope.index].relativeUrl);
+                    };
                 };
 
                 var getRelativeUrlString = function(parts) {
@@ -418,7 +530,20 @@
                     return outItem;
                 };
                
+                function getAdressArray() {
+                    var arr = [];
+                    arr.push("root");
+                    if ($scope.tabs[$scope.index].relativeUrl != "") {
+                        var tmp = $scope.tabs[$scope.index].relativeUrl.split('/').slice(1);
+                        arr = arr.concat(tmp);
+                        //tmp[0] = arr[0];
+                        //arr = tmp;
+                        //arr.push($scope.tabs[$scope.index].relativeUrl.split('/').slice(1));
+                    }
+                    return arr;
+                }
                 $scope.getLibrariesOnly = function () {
+                    $scope.setAllButtonsDisabled();
                     var url = $scope.tabs[$scope.index].url;
                     var currentcontext = new SP.ClientContext(url);
                     var currentweb = currentcontext.get_web();
@@ -464,7 +589,7 @@
                         $scope.tabs[$scope.index].relativeUrl = siteRelativeUrl + newRelativeUrl;
                         $scope.fileItems = [];                       
                         $scope.getDir();
-                        selectedBufferService.addToBuffer(selected, $scope.tabs[$scope.index].listId, $scope.tabs[$scope.index].url, $scope.tabs[$scope.index].relativeUrl);
+                        
                     } else {
                         $scope.fileItems = [];
                         $scope.tabs[$scope.index].listId = "";
@@ -473,6 +598,8 @@
                         $scope.upBtndisabled = true;
                         $scope.getLibrariesOnly();
                     }
+                    selectedBufferService.addToBuffer($scope.selected, $scope.tabs[$scope.index].listId, $scope.tabs[$scope.index].url, $scope.tabs[$scope.index].relativeUrl);
+                    $scope.adressArray = getAdressArray();
             };
 
 
@@ -485,7 +612,7 @@
                 };
                 $scope.onStart = function($index) {
                     $scope.index = $index;
-
+                    $scope.adressArray = getAdressArray();
                     var arrayPath = $scope.tabs[$scope.index].relativeUrl.split('/');
                     if (arrayPath.length > 2) {
                         $scope.getDir();
@@ -498,8 +625,8 @@
 
                 };
 
-
                 $scope.getDir = function documentQuery() {
+                    $scope.setAllButtonsEnabled();
                     var ctx = new SP.ClientContext($scope.tabs[$scope.index].url);
                     var oLibDocs = ctx.get_web().get_lists().getById($scope.tabs[$scope.index].listId);
                     var caml = SP.CamlQuery.createAllItemsQuery();
@@ -562,7 +689,17 @@
                 }
 
                 $scope.$on('selectedEvent', function(event, args) {
-                    if (args == $scope.index) { selectedBufferService.addToBuffer($scope.selected, $scope.tabs[$scope.index].listId, $scope.tabs[$scope.index].url, $scope.tabs[$scope.index].relativeUrl) };
+                    if (args == $scope.index) {
+                        selectedBufferService.addToBuffer($scope.selected,
+                            $scope.tabs[$scope.index].listId,
+                            $scope.tabs[$scope.index].url,
+                            $scope.tabs[$scope.index].relativeUrl);
+                        if ($scope.tabs[$scope.index].listId != "") {
+                            $scope.setAllButtonsEnabled();
+                        } else {
+                            $scope.setAllButtonsDisabled();
+                        };
+                    };
                 });
 
 
@@ -579,17 +716,19 @@
                 var url = "";
                 var listId = '';
                 var relativeUrl = '';
+                var cuted = false; 
 
                 methods.addToBuffer = function(item) {
                     buffer = [];
                     buffer.push(item);
                 };
-                methods.setBuffer = function (item, fullUrl, lstId, relUrl) {
+                methods.setBuffer = function (item, fullUrl, lstId, relUrl, cutStat) {
                     buffer = [];
                     buffer = item;
                     url = fullUrl;
                     listId = lstId;
                     relativeUrl = relUrl;
+                    cuted = cutStat;
                 }
 
                 methods.getFBuffer = function() {
@@ -604,7 +743,9 @@
                 methods.getFRelativeUrl = function() {
                     return relativeUrl;
                 };
-
+                methods.isCuted = function() {
+                    return cuted;
+                }
                 return methods;
             });
 
@@ -651,7 +792,7 @@
         var methods = {};
 
         var url = "";
-        //var moveItem;
+
 
         methods.CopyOrMove = function (itemUrl, sourceListId, sourceRelativeUrl, soutceItemId, destRelativeUrl, destListId, objectType, itemName, moveItem) {
             url = itemUrl;
@@ -702,26 +843,10 @@
                                 "move": move
                             });
 
-                            //Тут начилось форменное безумие
-                            //createFolder(destenationListId,
-                            //        newFolder,
-                            //        function(folder) {
-                            //            $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
-                            //        },
-                            //        function(sender, args) {
-                            //            $log.log(args.get_message());
-                            //        },
-                            //        currentItemId,
-                            //        destenationRelUrl)
-                            //    .then(function(args) {
-                            //        copyOrMoveFile(args[0], args[1] + "/" + args[2], listId, false); //Пока только копирует
-                            //    });
-
-                            //$log.log(currentItem.get_item('FileLeafRef') + currentItemFileDirRef);
                         }
                         asyncCopyFolder(fileListInfo).finally(function() {
                             if (move) {
-                                 deleteItem(url, listId, folderId);
+                                 methods.deleteItem(url, listId, folderId);
                             };
                         });
 
@@ -848,7 +973,7 @@
             return curItem;
         };
 
-        function deleteItem(itemUrl, itemListId, itemId) {
+        methods.deleteItem = function (itemUrl, itemListId, itemId) {
             var ctx = new SP.ClientContext(itemUrl);
             var list = ctx.get_web().get_lists().getById(itemListId);
             var item = list.getItemById(itemId);
@@ -863,7 +988,7 @@
             );
 
         }
-        function deleteItemToRecycle(itemUrl, itemListId, itemId) {
+        methods.deleteItemToRecycle = function (itemUrl, itemListId, itemId) {
             var ctx = new SP.ClientContext(itemUrl);
             var list = ctx.get_web().get_lists().getById(itemListId);
             var item = list.getItemById(itemId);
@@ -883,8 +1008,8 @@
         });
 
     angular.module('Abs')
-        .factory('checkIn',
-            function($scope) {
+        .factory('checkOperations',
+            function($scope, $log) {
                 var methods = {};
 
                 methods.checkIn = function (url, listId, relativeUrl, itemId, objectType) {

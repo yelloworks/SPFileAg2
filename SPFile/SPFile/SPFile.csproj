@@ -62,6 +62,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\fileTable.css" />
     <Content Include="Content\img\arrow-down.png" />
     <Content Include="Content\img\arrow-right.png" />
     <Content Include="Content\img\file.png" />
@@ -127,6 +128,7 @@
     <None Include="Scripts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{657a775c-4cf0-41dd-b03a-c77788c275e5}</SharePointProjectItemId>
     </None>
+    <Content Include="Pages\folderNameModal.html" />
     <Content Include="Pages\menu-ribbon.html" />
     <Content Include="RibbonActionButton\Elements.xml">
       <OpcRelationship>feature-elementmanifest</OpcRelationship>

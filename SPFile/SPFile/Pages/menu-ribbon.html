@@ -1,38 +1,53 @@
 ﻿<div class="col-ms-12 menu-panel" ng-controller ="RibbonButtonsCtrl as buttons">
     <div class="menu-panel-group">
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click ="pasteBtnClicked()"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click ="pasteBtnClicked()" ng-disabled = "disabledButtons.paste"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
         </div>
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-small" ng-click ="copyBtnClicked()"><span class="glyphicon glyphicon-copy"></span> Copy </button>
-            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-scissors"></span> Cut </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-small" ng-click ="copyBtnClicked()" ng-disabled ="disabledButtons.copy"><span class="glyphicon glyphicon-copy"></span> Copy </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-small" ng-disabled ="disabledButtons.cut"><span class="glyphicon glyphicon-scissors"></span> Cut </button>
         </div>
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click ="addFolderBtnClicked()"><span class="glyphicon glyphicon-plus big"></span>Add folder</button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click ="addFolderBtnClicked()" ng-disabled ="disabledButtons.addfolder"><span class="glyphicon glyphicon-plus big"></span>Add folder</button>
+        </div>
+        <div class="menu-btn-group">
+            <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                <button id="btn-delete" type="button" class="btn btn-primary btn-lg menu-btn-big" uib-dropdown-toggle ng-disabled="disabledButtons.del">
+                    <span class="glyphicon glyphicon-trash big"></span> <span class="caret"></span><br>Delete
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload">
+                    <li role="menuitem">
+                       <a href="#" ng-click ="deleteBtnClicked()">Delete</a>
+                    </li>
+                    <li role="menuitem">
+                        <a href="#" ng-click ="deletePermanentBtnClicked()">Permanent delete</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="menu-panel-group">
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Lock </button>
-            <button type="button" class="btn-primary btn-lg menu-btn-small"><span class="glyphicon glyphicon-lock"></span> Unlock </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-small" ng-disabled ="disabledButtons.lock"><span class="glyphicon glyphicon-lock"></span> Lock </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-small" ng-disabled ="disabledButtons.unlock"><span class="glyphicon glyphicon-lock" ></span> Unlock </button>
         </div>
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-retweet big"></span><br>Discard<br>checkout </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="discardCheckoutBtnClicked()" ng-disabled ="disabledButtons.discardCheckout"><span class="glyphicon glyphicon-retweet big" ></span><br>Discard<br>checkout </button>
         </div>
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-list-alt big"></span><br>Edit<br>metadata </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-disabled ="disabledButtons.editMetadata"><span class="glyphicon glyphicon-list-alt big" ></span><br>Edit<br>metadata </button>
         </div>
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big"><span class="glyphicon glyphicon-user big"></span><br>Permissions </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-disabled ="disabledButtons.permissions"><span class="glyphicon glyphicon-user big" ></span><br>Permissions </button>
         </div>
     </div>
     <div class="menu-panel-group">
         <div class="menu-btn-group" ng-controller="DropdownCtrl">
             <div class="btn-group" uib-dropdown dropdown-append-to-body>
-                <button id="btn-dload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
+                <button id="btn-dload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle ng-disabled ="disabledButtons.download">
                     Download <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload">
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload" >
                     <li role="menuitem">
                         <a href="#">Download</a>
                     </li>
@@ -42,7 +57,7 @@
                 </ul>
             </div>
             <div class="btn-group" uib-dropdown dropdown-append-to-body>
-                <button id="btn-upload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle>
+                <button id="btn-upload" type="button" class="btn btn-primary menu-btn-small" uib-dropdown-toggle ng-disabled ="disabledButtons.upload">
                     Upload <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-upload">

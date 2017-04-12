@@ -20,7 +20,9 @@
     <link rel ="stylesheet" type="text/css" href="../Content/ui-bootstrap-csp.css">
     <link rel ="stylesheet" type = "text/css" href="../Content/angular-tree-widget.min.css">
     <link rel ="stylesheet" type="text/css"href="../Content/ui-grid.css">
+
     <link rel ="Stylesheet" type="text/css" href="../Content/App.css" />
+    <link rel ="stylesheet" type="text/css" href ="../Content/fileTable.css">
 
     <!-- Add your JavaScript to the following file -->
     
@@ -31,9 +33,7 @@
     <%--<script type="text/javascript" src="../Scripts/angular.js"></script>--%>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js" type="text/javascript"></script>
     <%--<script type="text/javascript" src="../Scripts/angular-animate.js"></script>--%>
-
     <script type="text/javascript" src="../Scripts/angular-recursion.js"> </script>
-    
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js" type="text/javascript"></script>
     <%--<script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>--%>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-touch.js" type="text/javascript"></script>
@@ -54,69 +54,14 @@
     <script type ="text/javascript" src ="../Scripts/context.js"></script>
     <script type ="text/javascript" src ="../Scripts/directives/ribbonMenu.js"></script>
 
-    
-
+   
     <style>
-        section {
-            width: 700px;
-            margin: auto;
+        #adress div {
+          display:inline-block  
         }
-
-        ul {
-            list-style: none outside none;
-            display: inline-block;
-            width: 45%;
-        }
-
-        .selected-friends {
-            border: 1px solid #444;
-            border-radius: 5px;
-            padding: 2px;
-            margin: 2px;
-        }
-
-        #feedback { font-size: 1.4em; }
-
-        #selectable .ui-selecting { background: #FECA40; }
-
-        #selectable .ui-selected {
-            background: #F39814;
-            color: white;
-        }
-
-        #selectable {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #selectable li {
-            width: auto;
-            padding: 5px 10px;
-            margin: 5px 0;
-            border: 2px solid #444;
-            border-radius: 5px;
-            font-size: 1.1em;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .logList {
-            float: right;
-            min-height: 200px;
-            padding: 5px 15px;
-            border: 5px solid #000;
-            border-radius: 15px;
-        }
-
-        .logList:before {
-            content: 'log';
-            padding: 0 5px;
-            position: relative;
-            top: -1.1em;
-            background-color: #FFF;
-        }
+         
     </style>
+
     <script>
        
     </script>
@@ -125,7 +70,7 @@
 
 <%-- The markup in the following Content element will be placed in the TitleArea of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderPageTitleInTitleArea" runat="server">
-    Page Title
+
 </asp:Content>
 
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
@@ -133,7 +78,7 @@
        
     <html lang="en" >
 
-    <div>  
+    <div ng-controller ="MainInterface">  
         <ribbon-menu></ribbon-menu>        
         <div>
 <%--                <div ng-controller="TreeController">
@@ -150,21 +95,22 @@
                <uib-tabset active="activeTab">
                     <uib-tab index="$index" ng-repeat="tab in tabs" select="onSelection($index)" >     
                         <uib-tab-heading>
-                            {{tab.title}}
+                            {{tab.title}}                           
                             <i type="button" ng-click="removeTab($index, $event)" class="glyphicon glyphicon-remove"> </i>
                         </uib-tab-heading>                                         
-                        <section ng-controller="tabContentController" ng-init="onStart($index)">
+                        <section ng-controller="tabContentController" ng-init="onStart($index)" style="border: 1px solid black">
                             <div>
-                                <div>
+                                <div id="adress" >
                                    <input type="button" value ="Up" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled" />
+                                   <div style ="display: inline-block">Adress:</div> <div ng-repeat ="item in adressArray track by $index" class="adressItems" > <span class ="glyphicon glyphicon-chevron-right"></span>{{item}}</div>
                                 </div>
                                 <div></div>
                             </div>
-                            <p>
+<%--                            <p>
                                 You've selected:
                                 <span ng-hide="selected">none</span>
                                 <span class="selected-friends" ng-repeat="item in selected"> {{item.name}}</span>
-                            </p>
+                            </p>--%>
                           
                             <ul id="selectable"
                                 selectable="selection"

@@ -60,5 +60,6 @@
     <ProjectItemFile Source="themes\base\autocomplete.css" Target="Content\themes\base\" Type="ElementFile" />
     <ProjectItemFile Source="themes\base\all.css" Target="Content\themes\base\" Type="ElementFile" />
     <ProjectItemFile Source="themes\base\accordion.css" Target="Content\themes\base\" Type="ElementFile" />
+    <ProjectItemFile Source="fileTable.css" Target="Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>
