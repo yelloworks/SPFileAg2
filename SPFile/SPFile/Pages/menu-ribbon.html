@@ -48,8 +48,8 @@
                     Download <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-dload" >
-                    <li role="menuitem">
-                        <a href="#">Download</a>
+                    <li role="menuitem">                      
+                        <a href="#"  ng-click="downloadFileBtnClicked()" >Download </a>
                     </li>
                     <li role="menuitem">
                         <a href="#">Archive</a>
@@ -62,7 +62,8 @@
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-upload">
                     <li role="menuitem">
-                        <a href="#">File</a>
+                        <input type="file" value="file" id="fileinput" multiple style="display: none;"/>
+                        <a href="#" onclick="document.getElementById('fileinput').click();">File</a>
                     </li>
                     <li role="menuitem">
                         <a href="#">Folder</a>

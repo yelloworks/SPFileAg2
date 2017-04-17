@@ -241,7 +241,6 @@
                     del: true
                 };
 
-
                 $scope.setAllButtonsEnabled = function() {
                     $scope.disabledButtons.paste = false;
                     $scope.disabledButtons.copy = false;
@@ -285,7 +284,7 @@
 
     angular.module('Abs')
         .controller('RibbonButtonsCtrl',
-            ['$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', '$uibModal', function ($scope, selectedBufferService, bufferService, $log, fileOperations, $uibModal, checkOperations) {
+            ['$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', '$uibModal', 'loadOperations', function ($scope, selectedBufferService, bufferService, $log, fileOperations, $uibModal, checkOperations, loadOperations) {
 
                 $scope.copyBtnClicked = function() {
                     bufferService.setBuffer(selectedBufferService.getBuffer(),
@@ -376,6 +375,31 @@
 
                     }
                 }
+
+                $scope.downloadFileBtnClicked = function () {
+                    var sourceItems = selectedBufferService.getBuffer();
+                    var sourceUrl = selectedBufferService.getRelativeUrl(); // нужно как то его получить
+                    var sourceListId = selectedBufferService.getlistID();
+                    if (sourceItems[0].length != 0) {
+                        sourceItems[0].forEach(function (item, i, arr) {
+                            if (item.type == 0) {
+                                loadOperations.downloadSingleFile(sourceUrl, sourceListId, item.ID);
+                            };
+                        });
+
+                    }
+                    
+                };
+                //For Upload
+                var input = document.getElementById("fileinput");
+                input.addEventListener('change', function (e) {
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+                    var sourceRelativeUrl = selectedBufferService.getRelativeUrl();
+                    var files = e.target.files;
+                    loadOperations.uploadSingleFile(files, sourceUrl, sourceListId, sourceRelativeUrl);
+
+                });
 
             }]);
 
@@ -498,7 +522,7 @@
                 $scope.adressArray = [];
 
                 $scope.doubleClick = function() {
-                    //Tmp no check
+
                     var item = $scope.selected[0];
                     
 
@@ -536,9 +560,6 @@
                     if ($scope.tabs[$scope.index].relativeUrl != "") {
                         var tmp = $scope.tabs[$scope.index].relativeUrl.split('/').slice(1);
                         arr = arr.concat(tmp);
-                        //tmp[0] = arr[0];
-                        //arr = tmp;
-                        //arr.push($scope.tabs[$scope.index].relativeUrl.split('/').slice(1));
                     }
                     return arr;
                 }
@@ -570,7 +591,6 @@
                     $scope.$apply();
                     // alert("All Libraries" + '\n' + allLibs);
                 }
-
                 function librariiesExecuteOnFailure(sender, args) {
                     alert("Error in Getting Lists");
                 }
@@ -759,7 +779,7 @@
             var selectedListId = "";
             var selectedRelativeUrl = "";
 
-            methods.addToBuffer = function (bufferItems, bufferListId, bufferUrl, bufferRelativeUrlUrl) {
+            methods.addToBuffer = function (bufferItems, bufferListId, bufferUrl, bufferRelativeUrl) {
                 selectedItemsBuffer = [];
                 selectedListId = "";
                 selectedUrl = "";
@@ -767,7 +787,7 @@
                 selectedUrl = bufferUrl;
                 selectedListId = bufferListId;
                 selectedItemsBuffer.push(bufferItems);
-                selectedRelativeUrl = bufferRelativeUrlUrl;
+                selectedRelativeUrl = bufferRelativeUrl;
             };
             methods.getBuffer = function () {
                 return selectedItemsBuffer;
@@ -1158,5 +1178,82 @@
 
                 return methods;
             });
+
+    angular.module('Abs').factory('loadOperations', function($scope, $log) {
+        var methods = {};
+
+        methods.downloadSingleFile = function (url, listId, itemId) {
+            var ctx = new SP.ClientContext(url);
+            var list = ctx.get_web().get_lists().getById(listId);
+            var item = list.getItemById(itemId);
+            var file = item.get_file();
+            ctx.load(file);
+            ctx.executeQueryAsync(function (sender, args) {
+                var path = file.get_serverRelativeUrl();
+                $log.log(path);
+                $log.log(url + path);
+                window.location.href = "/_layouts/download.aspx?SourceUrl=" + url + path;
+            },
+                function (sender, args) {
+                    $log.log(args.get_message());
+
+                });
+
+        };
+
+        methods.uploadSingleFile = function(files, url, listId, targetRelUrl) {
+
+            for (var i = 0; i < files.length; i++) {
+                upload(input.files[i], url, listId, targetRelUrl);
+            }
+        }
+
+        function upload(file, url, listId, targetRelUrl) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                var clientContext = new SP.ClientContext(url);
+                var web = clientContext.get_web();
+                var list = web.get_lists().getById(listId);
+
+                var fileCreateInfo = new SP.FileCreationInformation();
+                fileCreateInfo.set_url(file.name);
+                fileCreateInfo.set_overwrite(true);
+                fileCreateInfo.set_content(new SP.Base64EncodedByteArray());
+
+                var arr = convertDataURIToBinary(fr.result);
+                for (var i = 0; i < arr.length; ++i) {
+                    fileCreateInfo.get_content().append(arr[i]);
+                }
+
+                if (targetRelUrl != "") {
+                    /* fr.newFile = list.getItemById(targetItemId).get_folder().get_files().add(fileCreateInfo);*/
+                    fr.newFile = web.getFolderByServerRelativeUrl(targetRelUrl).get_files().add(fileCreateInfo);
+                } else {
+                    fr.newFile = list.get_rootFolder().get_files().add(fileCreateInfo);
+                };
+
+                clientContext.load(fr.newFile);
+                clientContext.executeQueryAsync(function () { $log.log("Upload sucesess") }, function (sender, args) { $log.log(args.get_message()) });
+            };
+            fr.readAsDataURL(file);         
+        };
+
+ 
+        function convertDataUriToBinary(dataUri) {
+            var BASE64_MARKER = ';base64,';
+            var base64Index = dataUri.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+            var base64 = dataUri.substring(base64Index);
+            var raw = window.atob(base64);
+            var rawLength = raw.length;
+            var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+            for (var i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+            return array;
+        }
+
+        return methods;
+    });
 
 })()
