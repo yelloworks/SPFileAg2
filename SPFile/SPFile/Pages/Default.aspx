@@ -20,6 +20,8 @@
     <link rel ="stylesheet" type="text/css" href="../Content/ui-bootstrap-csp.css">
     <link rel ="stylesheet" type = "text/css" href="../Content/angular-tree-widget.min.css">
     <link rel ="stylesheet" type="text/css"href="../Content/ui-grid.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.1.0/toaster.css" rel="stylesheet" />
+    <%--<link rel ="stylesheet" type="text/css"href="../Content/toaster.css">--%>
 
     <link rel ="Stylesheet" type="text/css" href="../Content/App.css" />
     <link rel ="stylesheet" type="text/css" href ="../Content/fileTable.css">
@@ -45,7 +47,8 @@
     <script type="text/javascript" src="../Scripts/angular-ui/ui-bootstrap-tpls.min.js"> </script>   
     <script type ="text/javascript" src="../Scripts/ui-grid.js"></script>
     <script type ="text/javascript" src="../Scripts/ngSelectable.js"></script>
-   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.1.0/toaster.js"></script>
+    <%--<script type ="text/javascript" src="../Scripts/toaster.js"></script>--%>
     
 
     <script type="text/javascript" src="../Scripts/angular-tree-widget.js"> </script>
@@ -79,6 +82,7 @@
     <html lang="en" >
 
     <div ng-controller ="MainInterface">  
+        <%--<toaster-container toaster-options="{'close-button':false, 'time-out':{ 'toast-warning': 2000, 'toast-error': 0 } }"></toaster-container>--%>
         <ribbon-menu></ribbon-menu>        
         <div>
 <%--                <div ng-controller="TreeController">

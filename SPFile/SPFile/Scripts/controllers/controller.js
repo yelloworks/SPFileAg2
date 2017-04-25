@@ -1,156 +1,6 @@
 ﻿(function () {
 
-    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable']);
-
-//TreeCtrl not neded
-   /* angular.module('Abs')
-        .controller('TreeController',
-        [
-            '$scope', function($scope) {
-
-                function init() {
-                    $scope.treeNodes = [
-                        {
-                            name: "My Files",
-                            image: "app/images/disk.png",
-                            children: [
-                                {
-                                    name: "Music",
-                                    children: [
-                                        {
-                                            name: "Rock",
-                                            image: "app/images/rock.png",
-                                            children: [
-                                                {
-                                                    name: "The Eagles - Hotel California",
-                                                    image: "app/images/music-20.png"
-                                                },
-                                                { name: "Ozzy Osbourne - Dreamer", image: "app/images/music-20.png" }
-                                            ]
-                                        },
-                                        {
-                                            name: "Jazz",
-                                            image: "app/images/jazz.png",
-                                            children: [
-                                                {
-                                                    name: "Ray Charles - Hit the road Jack! ",
-                                                    image: "app/images/music-20.png"
-                                                },
-                                                {
-                                                    name: "Louis Prima - Just A Gigolo",
-                                                    image: "app/images/music-20.png"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    name: "Movies",
-                                    children: [
-                                        { name: "Gladiator", image: "app/images/movie.png" },
-                                        { name: "The Shawshank Redemption", image: "app/images/movie.png" },
-                                    ]
-                                },
-                                {
-                                    name: "Photos",
-                                    children: [
-                                        {
-                                            name: "Sea",
-                                            image: "app/images/sea.png",
-                                            children: [
-                                                { name: "image 1.jpg", image: "app/images/sea_img.png" },
-                                                { name: "image 4.png", image: "app/images/sea_img.png" }
-                                            ]
-                                        },
-                                        {
-                                            name: "Mountains",
-                                            image: "app/images/mountain.png",
-                                            children: [
-                                                { name: "image 1.jpg", image: "app/images/mountain_img.png" }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    name: "My Files",
-                                    children: [
-                                        {
-                                            name: "Angular books",
-                                            children: [
-                                                { name: "Pro AngularJS", image: "app/images/pdf.png" },
-                                                { name: "AngularJS: Up and Running", image: "app/images/pdf.png" },
-                                            ]
-                                        }, {
-                                            name: "Work",
-                                            children: [
-                                                {
-                                                    name: "Lost presentation",
-                                                    image: "app/images/ppt.png",
-                                                    disabled: true
-                                                },
-                                                { name: "Requirements", image: "app/images/word.png" },
-                                                { name: "TODO list" },
-                                                { name: "Finances", image: "app/images/excel.png" },
-                                            ]
-                                        },
-                                    ]
-                                }
-                            ]
-                        }
-                    ];
-
-                    $scope.basicTree = [
-                        {
-                            name: "Node 1",
-                            children: [{ name: "Node 1.1", children: [{ name: "Node 1.1.1" }, { name: "Node 1.1.2" }] }]
-                        },
-                        { name: "Node 2", children: [{ name: "Node 2.1" }, { name: "Node 2.2" }] }
-                    ]
-
-                    $scope.customImagesTree = [
-                        {
-                            name: "My Files",
-                            image: "app/images/disk.png",
-                            children: [
-                                { name: "Pro AngularJS", image: "app/images/pdf.png" },
-                                { name: "Presentation", image: "app/images/ppt.png" },
-                                { name: "Requirements", image: "app/images/word.png" }, { name: "TODO list" }
-                            ]
-                        }
-                    ];
-
-                    $scope.disabledNodes = [
-                        {
-                            name: "My Files",
-                            disabled: true,
-                            children: [
-                                {
-                                    name: "Angular books",
-                                    children: [
-                                        { name: "Pro AngularJS", image: "app/images/pdf.png" },
-                                        { name: "AngularJS: Up and Running", image: "app/images/pdf.png" },
-                                    ]
-                                }, {
-                                    name: "Work",
-                                    disabled: true,
-                                    children: [
-                                        { name: "Presentation", image: "app/images/ppt.png", disabled: true },
-                                        { name: "Requirements", image: "app/images/word.png" },
-                                        { name: "TODO list", disabled: true }
-                                    ]
-                                }
-                            ]
-                        }
-                    ];
-                }
-
-
-                init();
-
-            }
-        ]);
-*/
-
+    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster']);
 
     //on page load
     angular.element(document)
@@ -225,7 +75,7 @@
 
     angular.module('Abs')
         .controller('MainInterface',
-            function($scope) {
+            function($scope, toaster) {
                 $scope.disabledButtons = {
                     paste: true,
                     copy: true,
@@ -283,12 +133,14 @@
 
     angular.module('Abs')
         .controller('RibbonButtonsCtrl',
-            ['$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', 'checkOperations', 'loadOperations', '$uibModal', function ($scope, selectedBufferService, bufferService, $log, fileOperations, checkOperations, loadOperations, $uibModal) {
+            ['$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', 'checkOperations', 'loadOperations', '$uibModal', 'toaster', function ($scope, selectedBufferService, bufferService, $log, fileOperations, checkOperations, loadOperations, $uibModal, toaster) {
 
                 $scope.copyBtnClicked = function() {
                     bufferService.setBuffer(selectedBufferService.getBuffer(),
                         selectedBufferService.getInfo(),
                         false);
+                    toaster.clear();
+                    toaster.pop('warning', "Copied", bufferService.getItemsList(), null, 'trustedHtml');
                 };
 
                 $scope.pasteBtnClicked = function() {
@@ -309,6 +161,8 @@
 
                 $scope.cutBtnClicked = function() {
                     bufferService.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getInfo(), false);
+                    toaster.clear();
+                    toaster.pop('warning', "Cuted", bufferService.getItemsList(), null, 'trustedHtml');
                 };
 
                 $scope.addFolderBtnClicked = function() {
@@ -326,8 +180,8 @@
                         var itnew = it.slice(2, it.length);
                         itnew.push(folderName); // вот тут имя папки
                         var relativeUrl = itnew.join('/');
-
                         fileOperations.createNewFolder(url, listId, relativeUrl);
+
                         
                     }, function () {
                         $log.info('Modal dismissed at: ' + new Date());
@@ -351,7 +205,7 @@
                     }
                 };
 
-                $scope.deleteBtnClicked = function() {
+                $scope.deleteBtnClicked = function () {
                     deleteForEachSelected(fileOperations.deleteItem);
                 };
 
@@ -365,10 +219,38 @@
                     var sourceListId = selectedBufferService.getlistID();
 
                     if (sourceItems.length != 0) {
-                        sourceItems.forEach(function (item, i, arr) {
-                            method(sourceUrl, sourceListId, item.ID);
+                        var modalInstance = $uibModal.open({
+                            animation: true,
+                            templateUrl: 'solutionModal.html',
+                            controller: 'solutionModalCtrl',
+                            controllerAs: '$ctrl',
+                            resolve: {
+                                actionToDo: function() { return "Delete"; },
+                                itemsCount: function() { return sourceItems.length; }
+                            }
 
                         });
+                        modalInstance.result.then(function() {
+                                sourceItems.forEach(function(item, i, arr) {
+                                    method(sourceUrl, sourceListId, item.ID).then(function() {
+                                        toaster.pop('success',
+                                            "Delete items",
+                                            "Item deleted: " +item.name,
+                                            5000,
+                                            'trustedHtml');
+                                    }, function(error) {
+                                        toaster.pop('error',
+                                            "Delete items",
+                                            item.name+"\n"+error,
+                                            5000,
+                                            'trustedHtml');
+                                    });
+
+                                });
+                            },
+                            function() {
+                                $log.info('Modal dismissed at: ' + new Date());
+                            });
 
                     }
                 }
@@ -412,6 +294,20 @@
                     $uibModalInstance.dismiss('cancel');
                 };
             });
+
+    angular.module('Abs')
+    .controller('solutionModalCtrl',
+        function ($uibModalInstance, actionToDo, itemsCount) {
+            var $ctrl = this;
+            $ctrl.actionText = actionToDo;
+            $ctrl.itemsCount = itemsCount;
+            $ctrl.ok = function () {
+                $uibModalInstance.close();
+            };
+            $ctrl.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+        });
 
     angular.module('Abs')
         .controller('DropdownCtrl',
@@ -717,7 +613,6 @@
 
             }]);
 
-
     //Servisies
     angular.module('Abs')
         .factory('bufferService',
@@ -759,6 +654,23 @@
                 methods.getClearRelativeUrl = function() {
                     return info.relativeUrl.replace(info.relativeSiteUrl, "");
                 };
+                methods.getItemsList = function () {
+                    var lastItem = "";
+                    var length;
+                    if (buffer.length > 10) {
+                        length = 10;
+                        lastItem = '<li>....</li>';
+                    } else {
+                        length = buffer.length;
+                    }
+
+
+                    var outString = String.format('<ul style="list-style-type:none">');
+                    for (var i = 0; i < length; i++) {
+                        outString += "<li>" + buffer[i].name + "</li>";
+                    }
+                    return outString + lastItem + "</ul>";
+                }
                 return methods;
             });
 /*
@@ -847,7 +759,7 @@
 
     angular.module('Abs')
         .factory('fileOperations',
-        function ($q, $log) {
+        function ($q, $log, toaster) {
         var methods = {};
 
         var url = "";
@@ -909,7 +821,12 @@
 
                     }
                     asyncCopyFolder(fileListInfo)
-                        .finally(function() {
+                        .finally(function () {
+                            toaster.pop('success',
+                                    "Copy operation",
+                                    "Items copied",
+                                    3000,
+                                    'trustedHtml');
                             if (move) {
                                 methods.deleteItem(url, listId, folderId);
                             };
@@ -927,10 +844,15 @@
                 var defered = $q.defer();
                 createFolder(file.destenationListId,
                         file.newFolder,
-                        function(folder) {
+                        function (folder) {
                             $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
                         },
-                        function(sender, args) {
+                        function (sender, args) {
+                            toaster.pop('error',
+                                "Create folder",
+                                args.get_message(),
+                                3000,
+                                'trustedHtml');
                             $log.log(args.get_message());
                         },
                         file.currentItemId,
@@ -1024,10 +946,20 @@
                 url = itemUrl;
                 createFolder(destListId,
                     folderUrl,
-                    function(folder) {
+                    function (folder) {
+                        toaster.pop('success',
+                            "Create folder",
+                            String.format("Folder '{0}' has been created", folder.get_name()),
+                            3000,
+                            'trustedHtml');
                         $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
                     },
-                    function(sender, args) {
+                    function (sender, args) {
+                        toaster('error',
+                            "Create folder",
+                            args.get_message(),
+                            3000,
+                            'trustedHtml');
                         $log.log(args.get_message());
                     },
                     "",
@@ -1043,33 +975,41 @@
         };
 
         methods.deleteItem = function (itemUrl, itemListId, itemId) {
+            var defered = $q.defer();
             var ctx = new SP.ClientContext(itemUrl);
             var list = ctx.get_web().get_lists().getById(itemListId);
             var item = list.getItemById(itemId);
             item.deleteObject();
             ctx.executeQueryAsync(
                 function () {
+                    defered.resolve();
                     $log.log("delete success");
                 },
                 function (sender, args) {
+                    defered.reject(args.get_message());
                     $log.log(args.get_message());
                 }
             );
+            return defered.promise;
 
         }
         methods.deleteItemToRecycle = function (itemUrl, itemListId, itemId) {
+            var defered = $q.defer();
             var ctx = new SP.ClientContext(itemUrl);
             var list = ctx.get_web().get_lists().getById(itemListId);
             var item = list.getItemById(itemId);
             item.recycle();
             ctx.executeQueryAsync(
                 function () {
+                    defered.resolve();
                     $log.log("delete success");
                 },
                 function (sender, args) {
+                    defered.reject(args.get_message());
                     $log.log(args.get_message());
                 }
             );
+            return defered.promise;
 
         }
 

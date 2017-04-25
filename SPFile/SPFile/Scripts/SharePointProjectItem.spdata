@@ -26,5 +26,6 @@
     <ProjectItemFile Source="ngSelectable.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="jquery-ui-1.12.1.min.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="jquery-ui-1.12.1.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="toaster.js" Target="Scripts\" Type="ElementFile" />
   </Files>
 </ProjectItem>

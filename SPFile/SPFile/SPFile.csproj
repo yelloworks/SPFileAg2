@@ -109,6 +109,7 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="Content\toaster.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Content\ui-grid.css" />
     <Content Include="Elements.xml" />
@@ -130,6 +131,7 @@
     </None>
     <Content Include="Pages\folderNameModal.html" />
     <Content Include="Pages\menu-ribbon.html" />
+    <Content Include="Pages\solutionModal.html" />
     <Content Include="RibbonActionButton\Elements.xml">
       <OpcRelationship>feature-elementmanifest</OpcRelationship>
     </Content>
@@ -162,6 +164,7 @@
     <Content Include="Scripts\jquery-ui-1.12.1.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
     <Content Include="Scripts\ngSelectable.js" />
+    <Content Include="Scripts\toaster.js" />
     <Content Include="Scripts\ui-grid.js" />
     <Content Include="Scripts\_references.js" />
   </ItemGroup>

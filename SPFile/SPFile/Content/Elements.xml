@@ -60,5 +60,6 @@
     <File Path="Content\themes\base\all.css" Url="Content/themes/base/all.css" ReplaceContent="TRUE" />
     <File Path="Content\themes\base\accordion.css" Url="Content/themes/base/accordion.css" ReplaceContent="TRUE" />
     <File Path="Content\fileTable.css" Url="Content/fileTable.css" ReplaceContent="TRUE" />
+    <File Path="Content\toaster.css" Url="Content/toaster.css" ReplaceContent="TRUE" />
   </Module>
 </Elements>
