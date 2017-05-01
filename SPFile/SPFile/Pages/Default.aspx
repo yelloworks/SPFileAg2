@@ -104,9 +104,10 @@
                         </uib-tab-heading>                                         
                         <section ng-controller="tabContentController" ng-init="onStart($index)" style="border: 1px solid black">
                             <div>
-                                <div id="adress" >
-                                   <input type="button" value ="Up" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled" />
-                                   <div style ="display: inline-block">Adress:</div> <div ng-repeat ="item in adressArray track by $index" class="adressItems" > <span class ="glyphicon glyphicon-chevron-right"></span>{{item}}</div>
+                                <div id="adress" style ="display: inline-block" >
+                                   <button type="button" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled"><span class="glyphicon glyphicon-arrow-up"></span> </button>
+                                    <button type="button" ng-click ="refreshPage()" > <span class="glyphicon glyphicon-refresh"></span></button>
+                                   <div style ="display: inline-block">Adress:</div> <div ng-repeat ="item in adressArray track by $index" class="adressItems" ng-click  ="adressItemClicked($index)"> <span class ="glyphicon glyphicon-chevron-right"></span>{{item}}</div>
                                 </div>
                                 <div></div>
                             </div>

@@ -416,9 +416,7 @@
 
                 $scope.doubleClick = function() {
 
-                    var item = $scope.selected[0];
-                    
-
+                    var item = $scope.selected[0];                
                     //Not rewrite, no sence
                     // var url = $scope.tabs[$scope.index].url;
                     if (item.type != 0) {
@@ -430,9 +428,7 @@
                             $scope.tabs[$scope.index].listId = item.libraryID;
                         }
                         $scope.getDir();
-                        $scope.selected = [];
-                        $scope.adressArray = getAdressArray();
-                        selectedBufferService.setSelected($scope.selected,$scope.tabs[$scope.index]);
+                        setSelectedAndAdress();
                     };
                 };
 
@@ -502,17 +498,62 @@
                         $scope.getDir();
                         
                     } else {
+                        viewLibrary();
+                    }
+                    setSelectedAndAdress();
+                };
+
+                function viewLibrary() {
                         $scope.fileItems = [];
                         $scope.tabs[$scope.index].listId = "";
                         $scope.tabs[$scope.index].title = "root";
                         $scope.tabs[$scope.index].relativeUrl = "";
                         $scope.upBtndisabled = true;
                         $scope.getLibrariesOnly();
+                }
+                function setSelectedAndAdress() {
+                    $scope.selected = [];
+                    selectedBufferService.setSelected($scope.selected, $scope.tabs[$scope.index]);
+                    $scope.adressArray = getAdressArray();
+                };
+
+                function getClearRelativeSiteUrlArray() {
+                    return $scope.tabs[$scope.index].relativeSiteUrl.split("/").slice(1);
+                };
+
+                $scope.adressItemClicked = function (index) {
+                    if (index != 0) {
+                        var pathPart = $scope.adressArray.slice(1, index + 1);
+                        var newPath = getClearRelativeSiteUrlArray().concat(pathPart);
+                        $scope.tabs[$scope.index].relativeUrl = getRelativeUrlString(newPath);
+                        $scope.tabs[$scope.index].title = newPath.slice(newPath.length - 1)[0];
+                        $scope.fileItems = [];
+                        $scope.getDir();
+                    } else {
+                        viewLibrary();
+                    }
+                    setSelectedAndAdress();
+                }
+
+
+                $scope.refreshPage = function () {
+                    var siteRelativeUrl = "";
+                    if ($scope.tabs[$scope.index].relativeSiteUrl != '/') {
+                        siteRelativeUrl = $scope.tabs[$scope.index].relativeSiteUrl;
+                    };
+                    var arrayPath = $scope.tabs[$scope.index].relativeUrl.replace(siteRelativeUrl).split('/');
+                    if (arrayPath.length >= 2) {
+                        $scope.fileItems = [];
+                        $scope.getDir();
+
+                    } else {
+                        $scope.fileItems = [];
+                        $scope.upBtndisabled = true;
+                        $scope.getLibrariesOnly();
                     }
                     selectedBufferService.setSelected($scope.selected, $scope.tabs[$scope.index]);
                     $scope.adressArray = getAdressArray();
-            };
-
+                };
 
                 $scope.selectionStart = function() {
                     $scope.log.push(($scope.log.length + 1) + ': selection start!');
@@ -673,48 +714,6 @@
                 }
                 return methods;
             });
-/*
-    angular.module('Abs')
-    .factory('selectedBufferService',
-        function () {
-            var methods = {};
-
-            var selectedUrl = "";
-            var selectedItemsBuffer = [];
-            var selectedListId = "";
-            var selectedRelativeUrl = "";
-            var selectedRootFolder = "";
-
-            methods.addToBuffer = function (bufferItems, bufferListId, bufferUrl, bufferRelativeUrl, bufferRootFolder) {
-                selectedItemsBuffer = [];
-                selectedListId = "";
-                selectedUrl = "";
-
-                selectedUrl = bufferUrl;
-                selectedListId = bufferListId;
-                selectedItemsBuffer.push(bufferItems);
-                selectedRelativeUrl = bufferRelativeUrl;
-                selectedRootFolder = bufferRootFolder;
-
-            };
-            methods.getBuffer = function () {
-                return selectedItemsBuffer;
-            };
-            methods.getlistID = function () {
-                return selectedListId;
-            };
-            methods.getUrl = function() {
-                return selectedUrl;
-            };
-            methods.getRelativeUrl = function() {
-                return selectedRelativeUrl;
-            };
-            methods.getRootFolder = function() {
-                return selectedRootFolder;
-            };
-            return methods;
-        });
-*/
 
     angular.module('Abs')
    .factory('selectedBufferService',
@@ -771,9 +770,8 @@
                 url = url.slice(0,-1);
             }
             var listId = sourceListId;
-            //relativeUrl = removeFirstSlash(sourceRelativeUrl);
-            var destenationListId = destListId;//'{e9af8f1f-dc7c-4869-ba66-77daa1080c33}'; //временно нацелен на temp         
-            var destenationRelUrl = removeFirstSlash(destRelativeUrl); //"temp/";
+            var destenationListId = destListId;     
+            var destenationRelUrl = removeFirstSlash(destRelativeUrl);
 
            // moveItem = move;
             if (objectType == 0) {
@@ -1018,7 +1016,7 @@
 
     angular.module('Abs')
         .factory('checkOperations',
-            function($log) {
+            function($log, toaster) {
                 var methods = {};
 
                 methods.checkIn = function (url, listId, relativeUrl, itemId, objectType) {
@@ -1115,7 +1113,10 @@
                         $log.log(name.get_loginName());
                         file.undoCheckOut();
                         $log.log("file undoCheckOut");
-                        ctx.executeQueryAsync(function () { }, function (sender, args) { $log.log(args.get_message()); });
+                        ctx.executeQueryAsync(function() {
+                        }, function (sender, args) {
+                             $log.log(args.get_message());
+                        });
                     },
                         function (sender, args) {
                             $log.log(args.get_message());
