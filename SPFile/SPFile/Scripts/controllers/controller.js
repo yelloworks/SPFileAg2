@@ -280,6 +280,20 @@
 
                 });
 
+                $scope.permissionsBtnClicked = function() {
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'permissionsModal.html',
+                        controller: 'permissionsModal',
+                        controllerAs: '$ctrl'
+                    });
+                    modalInstance.result.then(function (folderName) {
+
+                    }, function () {
+                        $log.info('Modal dismissed at: ' + new Date());
+                    });
+                };
+
             }]);
 
     angular.module('Abs')
@@ -308,6 +322,41 @@
                 $uibModalInstance.dismiss('cancel');
             };
         });
+
+    angular.module('aps')
+        .controller('permissionsModal',
+            function ($uibModalInstance) {
+                var $ctrl = this;
+                $ctrl.text = "New Folder";
+
+
+                $ctrl.grant = function() {
+                    
+                };
+                $ctrl.create = function() {
+                    
+                };
+
+                $ctrl.edit = function() {
+                    
+                };
+                $ctrl.addRoles = function () {
+
+                    var someTmp = GetUrlKeyValue("SPAppWebUrl");
+                    var it = someTmp.split('/');
+                    var itnew = it.slice(0, it.length - 1);
+                    var url = itnew.join('/');
+                    window.open(url + "/_layouts/addrole.aspx");
+                };
+
+
+                $ctrl.ok = function () {
+                    $uibModalInstance.close($ctrl.text);
+                };
+                $ctrl.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            });
 
     angular.module('Abs')
         .controller('DropdownCtrl',

@@ -105,18 +105,12 @@
                         <section ng-controller="tabContentController" ng-init="onStart($index)" style="border: 1px solid black">
                             <div>
                                 <div id="adress" style ="display: inline-block" >
-                                   <button type="button" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled"><span class="glyphicon glyphicon-arrow-up"></span> </button>
-                                    <button type="button" ng-click ="refreshPage()" > <span class="glyphicon glyphicon-refresh"></span></button>
-                                   <div style ="display: inline-block">Adress:</div> <div ng-repeat ="item in adressArray track by $index" class="adressItems" ng-click  ="adressItemClicked($index)"> <span class ="glyphicon glyphicon-chevron-right"></span>{{item}}</div>
+                                   <button type="button" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled" class ="btn adress-btn"><span class="glyphicon glyphicon-arrow-up"></span> </button>
+                                    <button type="button" ng-click ="refreshPage()"  class ="btn adress-btn"> <span class="glyphicon glyphicon-refresh"></span></button>
+                                   <div style ="display: inline-block">Adress:</div> <div ng-repeat ="item in adressArray track by $index" class="btn adressItems" ng-click  ="adressItemClicked($index)"> <span class ="glyphicon glyphicon-chevron-right"></span><label>{{item}}</label></div>
                                 </div>
                                 <div></div>
-                            </div>
-<%--                            <p>
-                                You've selected:
-                                <span ng-hide="selected">none</span>
-                                <span class="selected-friends" ng-repeat="item in selected"> {{item.name}}</span>
-                            </p>--%>
-                          
+                            </div>                         
                             <ul id="selectable"
                                 selectable="selection"
                                 selectable-list="fileItems"

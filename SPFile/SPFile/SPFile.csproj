@@ -131,6 +131,7 @@
     </None>
     <Content Include="Pages\folderNameModal.html" />
     <Content Include="Pages\menu-ribbon.html" />
+    <Content Include="Pages\permissionsModal.html" />
     <Content Include="Pages\solutionModal.html" />
     <Content Include="RibbonActionButton\Elements.xml">
       <OpcRelationship>feature-elementmanifest</OpcRelationship>

@@ -6,5 +6,6 @@
     <ProjectItemFile Source="menu-ribbon.html" Target="Pages\" Type="ElementFile" />
     <ProjectItemFile Source="folderNameModal.html" Target="Pages\" Type="ElementFile" />
     <ProjectItemFile Source="solutionModal.html" Target="Pages\" Type="ElementFile" />
+    <ProjectItemFile Source="permissionsModal.html" Target="Pages\" Type="ElementFile" />
   </Files>
 </ProjectItem>
