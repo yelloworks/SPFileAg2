@@ -61,5 +61,10 @@
     <File Path="Content\themes\base\accordion.css" Url="Content/themes/base/accordion.css" ReplaceContent="TRUE" />
     <File Path="Content\fileTable.css" Url="Content/fileTable.css" ReplaceContent="TRUE" />
     <File Path="Content\toaster.css" Url="Content/toaster.css" ReplaceContent="TRUE" />
+    <File Path="Content\ui-grid.woff" Url="Content/ui-grid.woff" ReplaceContent="TRUE" />
+    <File Path="Content\ui-grid.ttf" Url="Content/ui-grid.ttf" ReplaceContent="TRUE" />
+    <File Path="Content\ui-grid.svg" Url="Content/ui-grid.svg" ReplaceContent="TRUE" />
+    <File Path="Content\ui-grid.min.css" Url="Content/ui-grid.min.css" ReplaceContent="TRUE" />
+    <File Path="Content\ui-grid.eot" Url="Content/ui-grid.eot" ReplaceContent="TRUE" />
   </Module>
 </Elements>

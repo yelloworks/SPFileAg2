@@ -1,27 +1,33 @@
 ﻿<div class="modal-header">
-    <h3 class="modal-title" id="modal-title">Create new folder</h3>
+    <div class="menu-panel-group">
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.grant()"><br>Grant permissions </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.create()"><br>Create group </button>
+        </div>
+    </div>
+    <div class="menu-panel-group">
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.edit()"><br>Edit permission </button>
+        </div>
+        <div class="menu-btn-group">
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.delete()"><br>Delete </button>
+        </div>
+    </div>
+
 </div>
 <div class="modal-body" id="modal-body">
 
-    <div class="menu-panel-group">
-        <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.grant" ng-disabled="disabledButtons.paste"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
-        </div>
-        <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.create" ng-disabled="disabledButtons.paste"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
-        </div>
-        <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.edit" ng-disabled="disabledButtons.paste"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
-        </div>
-        <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.grant" ng-disabled="disabledButtons.paste"><span class="glyphicon glyphicon-paste big"></span><br>Paste </button>
-        </div>
-    </div>
+
+    <div id="grid1" ui-grid="$ctrl.gridOptions" ui-grid-selection class="grid"></div>
     <label>Enter new folder name: </label>
     <input type="text" name="input" ng-model="$ctrl.text">
     <button type="button" ng-click="$ctrl.editRoles()"></button>
 </div>
+
 <div class="modal-footer">
+
     <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">OK</button>
     <button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
 </div>

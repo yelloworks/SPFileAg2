@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster']);
+    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster', 'ui.grid.selection']);
 
     //on page load
     angular.element(document)
@@ -126,7 +126,7 @@
                     $scope.disabledButtons.lock = true;
                     $scope.disabledButtons.unlock = true;
                     $scope.disabledButtons.editMetadata = true;
-                    $scope.disabledButtons.permissions = true;
+                   // $scope.disabledButtons.permissions = true;
 
                 };
             });
@@ -281,18 +281,34 @@
                 });
 
                 $scope.permissionsBtnClicked = function() {
-                    var modalInstance = $uibModal.open({
-                        animation: true,
-                        templateUrl: 'permissionsModal.html',
-                        controller: 'permissionsModal',
-                        controllerAs: '$ctrl'
-                    });
-                    modalInstance.result.then(function (folderName) {
+                    if (selectedBufferService.getBuffer().length != 0) {
+                        var modalInstance = $uibModal.open({
+                            animation: true,
+                            templateUrl: 'permissionsModal.html',
+                            controller: 'permissionsModal',
+                            controllerAs: '$ctrl',
+                            size: "lg",
+                            resolve: {
+                                items: function() {
+                                    return selectedBufferService.getBuffer();
+                                },
+                                url: function() {
+                                    return selectedBufferService.getUrl();
+                                },
+                                listId: function() {
+                                    return selectedBufferService.getlistID();
+                                }
 
-                    }, function () {
-                        $log.info('Modal dismissed at: ' + new Date());
-                    });
-                };
+                            }
+                        });
+                        modalInstance.result.then(function(folderName) {
+
+                            },
+                            function() {
+                                $log.info('Modal dismissed at: ' + new Date());
+                            });
+                    };
+                }
 
             }]);
 
@@ -323,33 +339,219 @@
             };
         });
 
-    angular.module('aps')
+    angular.module('Abs')
         .controller('permissionsModal',
-            function ($uibModalInstance) {
+            function ($uibModalInstance,$q,$log, items, url, listId) {
                 var $ctrl = this;
-                $ctrl.text = "New Folder";
 
+                $ctrl.gridOptions = {
+                    enableRowSelection: true,
+                    enableSelectAll: true,
+                    exporterMenuCsv: false,
+                    enableGridMenu: true,
+                    columnDefs: [
+                        { name: 'name' },
+                        { name: 'defenition' }
+                    ],
+                    onRegisterApi: function(gridApi) {
+                        $ctrl.gridApi = gridApi;
+                    }
+                };
+
+
+                var refresh = function() {
+                    items.forEach(function(item) {
+                        getGroupList(url, listId, item.ID);
+                    });
+                }
+
+                $ctrl.text = "New Folder";
+                
 
                 $ctrl.grant = function() {
-                    
+                   // onStart(); //tmp
+                    $log.log($ctrl.gridApi.selection.getSelectedRows());
                 };
                 $ctrl.create = function() {
-                    
+                    var someTmp = GetUrlKeyValue("SPAppWebUrl");
+                    var it = someTmp.split('/');
+                    var itnew = it.slice(0, it.length - 1);
+                    var url = itnew.join('/');
+                    window.open(url + "/_layouts/groups.aspx");
                 };
-
                 $ctrl.edit = function() {
                     
                 };
+                $ctrl.delete = function() {
+                    deleteSelectedPermissions().finally(function () {
+                        refresh();
+                    });
+                    
+                };
+
+
                 $ctrl.addRoles = function () {
 
                     var someTmp = GetUrlKeyValue("SPAppWebUrl");
                     var it = someTmp.split('/');
                     var itnew = it.slice(0, it.length - 1);
                     var url = itnew.join('/');
+                    //window.open(url + "/_layouts/groups.aspx"); 
                     window.open(url + "/_layouts/addrole.aspx");
                 };
 
+                function deleteSelectedPermissions() {
+                    var promises = $ctrl.gridApi.selection.getSelectedRows()
+                        .map(function(row) {
+                            var defered = $q.defer();
+                            items.forEach(function(item) {
+                                deletePermission(url, listId, item.ID, row.id)
+                                    .then(function() {
+                                            defered.resolve();
+                                        },
+                                        function() {
+                                            defered.reject();
+                                        });
+                            });
+                            return defered.promise;
+                        });
+                    return $q.all(promises);
+                }
 
+                function deletePermission(url, listId, itemId, principalId) {
+                    var defered = $q.defer();
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var list = web.get_lists().getById(listId);
+                    var item = list.getItemById(itemId);
+
+                    var roles = item.get_roleAssignments().getByPrincipalId(principalId);
+                    roles.deleteObject();
+                    ctx.executeQueryAsync(function () {
+                        defered.resolve();
+                    }, function () {
+                        defered.reject();
+                    });
+                    return defered.promise;
+                }
+
+                var start = refresh();
+                
+
+
+                function getGroupList(url, listId, itemId) {
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var list = web.get_lists().getById(listId);
+                    var item = list.getItemById(itemId);
+
+                    var roles = item.get_roleAssignments();
+
+                    ctx.load(roles);
+                    ctx.executeQueryAsync(function() {
+                            var rolesEnumerator = roles.getEnumerator();
+                            var rolesList = [];
+                            while (rolesEnumerator.moveNext()) {
+                                rolesList.push(rolesEnumerator.get_current());
+                            }
+                            getAllRoles(rolesList, ctx)
+                                .then(function(results) {
+                                    if ($ctrl.gridOptions.data.length == 0) {
+                                        $ctrl.gridOptions.data = results;
+                                        $log.log($ctrl.gridOptions.data);
+                                    } else {
+                                        var out = [];
+
+                                        results.forEach(function(item, i) {
+                                            var itemIndex = findIndex(item.id);
+                                            if (itemIndex != -1) {
+                                                Array.prototype.defUniq = function(a) {
+                                                    return this.filter(function(b) {
+                                                        return a.indexOf(b) < 0;
+                                                    });
+                                                };
+                                                var uniqDefinitions = $ctrl.gridOptions.data[itemIndex].defenitions
+                                                    .defUniq(item.defenitions);
+                                                if (uniqDefinitions.length == 0) {
+                                                    uniqDefinitions = item.defenitions
+                                                        .defUniq($ctrl.gridOptions.data[itemIndex].defenitions);
+                                                    if (uniqDefinitions.length == 0) {
+                                                        out.push(item);
+                                                    }
+
+                                                };
+                                            };
+
+
+                                        });
+
+                                        $ctrl.gridOptions.data = out;
+                                        $log.log(results);
+                                        $log.log($ctrl.gridOptions.data);
+                                    };
+                                    //findIndex(1);
+                                    //findIndex(110);
+
+                                });
+                        },
+                        function() {
+
+                        });
+                };
+
+              
+
+                function getItemPermissions(ctx, role) {
+                    var defered = $q.defer();
+                    var defenition = role.get_roleDefinitionBindings();
+                    var member = role.get_member();
+                    ctx.load(defenition);
+                    ctx.load(member, "Title");
+                    ctx.executeQueryAsync(function() {
+                            $log.log(member.get_title());
+                            var defEnumerator = defenition.getEnumerator();
+                            var defenitionsItems = [];
+                            while (defEnumerator.moveNext()) {
+                                var defItem = defEnumerator.get_current();
+                                //defenitionsItems.push({ name: defItem.get_name(), id: defItem.get_id() });
+                                defenitionsItems.push(defItem.get_name());
+                            }
+                            // singlItems.push({ name: member.get_title(), id: role.get_principalId(), defenitions: defenitionsItems });
+                            defered.resolve({
+                                name: member.get_title(),
+                                id: role.get_principalId(),
+                                defenitions: defenitionsItems,
+                                defenition: defenitionsItems.join(', ')
+                            });
+                            $log.log("Done");
+                        },
+                        function() {
+                            defered.reject();
+                        });
+                    return defered.promise;
+                }
+               
+                function findIndex(serchItemId) {
+                    var elements = $ctrl.gridOptions.data.map(function (x) {
+                        return x.id;
+                    }).indexOf(serchItemId);
+                   // var objFound = $ctrl.gridOptions.data[elements];
+                    return elements;
+                };
+
+                function getAllRoles(roles, ctx) {
+                    var promises = roles.map(function (role) {
+                        var defered = $q.defer();
+                        getItemPermissions(ctx, role).then(function (item) {
+                            defered.resolve(item);
+                        });
+                        return defered.promise;
+                    });
+                    return $q.all(promises);
+                }
+
+
+                //$ctrl.$watch($ctrl.gridOptions.data, $ctrl.gridOptions.dataShow);
                 $ctrl.ok = function () {
                     $uibModalInstance.close($ctrl.text);
                 };

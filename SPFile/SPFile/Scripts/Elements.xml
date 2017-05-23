@@ -26,5 +26,6 @@
     <File Path="Scripts\jquery-ui-1.12.1.min.js" Url="Scripts/jquery-ui-1.12.1.min.js" ReplaceContent="TRUE" />
     <File Path="Scripts\jquery-ui-1.12.1.js" Url="Scripts/jquery-ui-1.12.1.js" ReplaceContent="TRUE" />
     <File Path="Scripts\toaster.js" Url="Scripts/toaster.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\ui-grid.min.js" Url="Scripts/ui-grid.min.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>

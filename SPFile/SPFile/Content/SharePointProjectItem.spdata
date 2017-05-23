@@ -62,5 +62,10 @@
     <ProjectItemFile Source="themes\base\accordion.css" Target="Content\themes\base\" Type="ElementFile" />
     <ProjectItemFile Source="fileTable.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="toaster.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="ui-grid.woff" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="ui-grid.ttf" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="ui-grid.svg" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="ui-grid.min.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="ui-grid.eot" Target="Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>
