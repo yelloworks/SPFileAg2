@@ -67,5 +67,10 @@
     <ProjectItemFile Source="ui-grid.svg" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="ui-grid.min.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="ui-grid.eot" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="select.min.css.map" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="select.min.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="select.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="angular-ui-switch.min.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="angular-ui-switch.css" Target="Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>

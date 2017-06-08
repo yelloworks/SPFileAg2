@@ -1,0 +1,41 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Create new folder</h3>
+</div>
+<div class="modal-body" id="modal-body">
+
+    <h3>Select users or groups</h3>
+    <ui-select multiple ng-model="$ctrl.permissionItemSelected" theme="bootstrap" sortable="true" close-on-select="false" style="width: 800px;">
+        <ui-select-match placeholder="Select user or groups...">{{$item.name}} &lt;</ui-select-match>
+        <ui-select-choices repeat="item in $ctrl.permissionItem | propsFilter: {name: $select.search}">
+            <div ng-bind-html="item.name | highlight: $select.search"></div>
+            <small>
+                {{item.type}}
+            </small>
+        </ui-select-choices>
+    </ui-select>
+
+
+    <ui-select ng-model="$ctrl.roleItemsSelected" theme="bootstrap" title="Choose a person">
+        <ui-select-match placeholder="Select role definition...">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="item in $ctrl.roleDefinitionsItems | filter: $select.search">
+            <div ng-bind-html="item.name | highlight: $select.search"></div>
+            <!--<small ng-bind-html="item.email | highlight: $select.search"></small>-->
+        </ui-select-choices>
+    </ui-select>
+
+    <!--<h4>Static arrays</h4>
+    <pre>Model: {{$ctrl.out.name | json}}</pre>
+    <div ng-repeat="item in $ctrl.usersAndGroups track by $index" style="display: inline-block">
+        <div style="display: inline"><label>{{item.name}}</label><i type="button" ng-click="$ctrl.removeItem($index, $event)" class="glyphicon glyphicon-remove"></i>
+        </div>
+    </div>
+
+    <input type="text" ng-model="$ctrl.out" uib-typeahead="item as item.name for item in $ctrl.permissionItem | filter:{name:$viewValue}" style="display: inline; float: left;" typeahead-show-hint="true" typeahead-min-length="0">
+    <input type="button" value="add" ng-click="$ctrl.addBtnClicked()" style="display: block">-->
+
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
+</div>

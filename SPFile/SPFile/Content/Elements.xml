@@ -66,5 +66,10 @@
     <File Path="Content\ui-grid.svg" Url="Content/ui-grid.svg" ReplaceContent="TRUE" />
     <File Path="Content\ui-grid.min.css" Url="Content/ui-grid.min.css" ReplaceContent="TRUE" />
     <File Path="Content\ui-grid.eot" Url="Content/ui-grid.eot" ReplaceContent="TRUE" />
+    <File Path="Content\select.min.css.map" Url="Content/select.min.css.map" ReplaceContent="TRUE" />
+    <File Path="Content\select.min.css" Url="Content/select.min.css" ReplaceContent="TRUE" />
+    <File Path="Content\select.css" Url="Content/select.css" ReplaceContent="TRUE" />
+    <File Path="Content\angular-ui-switch.min.css" Url="Content/angular-ui-switch.min.css" ReplaceContent="TRUE" />
+    <File Path="Content\angular-ui-switch.css" Url="Content/angular-ui-switch.css" ReplaceContent="TRUE" />
   </Module>
 </Elements>

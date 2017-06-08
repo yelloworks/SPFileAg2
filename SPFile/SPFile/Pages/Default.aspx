@@ -21,6 +21,10 @@
     <link rel ="stylesheet" type = "text/css" href="../Content/angular-tree-widget.min.css">
     <link rel ="stylesheet" type="text/css"href="../Content/ui-grid.css">
     <link href="//cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.1.0/toaster.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css">
+    <link rel="stylesheet" href="../Content/angular-ui-switch.css">
+    <link rel="stylesheet" href="../Content/select.css">
     <%--<link rel ="stylesheet" type="text/css"href="../Content/toaster.css">--%>
 
     <link rel ="Stylesheet" type="text/css" href="../Content/App.css" />
@@ -48,10 +52,12 @@
     <script type ="text/javascript" src="../Scripts/ui-grid.js"></script>
     <script type ="text/javascript" src="../Scripts/ngSelectable.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.1.0/toaster.js"></script>
+    <script type="text/javascript" src="../Scripts/angular-ui-switch.js"> </script>
     <%--<script type ="text/javascript" src="../Scripts/toaster.js"></script>--%>
-    
 
+     
     <script type="text/javascript" src="../Scripts/angular-tree-widget.js"> </script>
+    <script type="text/javascript" src="../Scripts/select.js"></script>  
     <script type="text/javascript" src="../Scripts/App.js"></script>
     <script type="text/javascript" src ="../Scripts/controllers/controller.js"> </script>
     <script type ="text/javascript" src ="../Scripts/context.js"></script>

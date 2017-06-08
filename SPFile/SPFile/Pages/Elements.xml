@@ -6,5 +6,7 @@
     <File Path="Pages\folderNameModal.html" Url="Pages/folderNameModal.html" ReplaceContent="TRUE" />
     <File Path="Pages\solutionModal.html" Url="Pages/solutionModal.html" ReplaceContent="TRUE" />
     <File Path="Pages\permissionsModal.html" Url="Pages/permissionsModal.html" ReplaceContent="TRUE" />
+    <File Path="Pages\grantPermissionModal.html" Url="Pages/grantPermissionModal.html" ReplaceContent="TRUE" />
+    <File Path="Pages\chooseRoleInheritanceModal.html" Url="Pages/chooseRoleInheritanceModal.html" ReplaceContent="TRUE" />
   </Module>
 </Elements>

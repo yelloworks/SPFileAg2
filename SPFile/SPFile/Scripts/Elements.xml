@@ -27,5 +27,10 @@
     <File Path="Scripts\jquery-ui-1.12.1.js" Url="Scripts/jquery-ui-1.12.1.js" ReplaceContent="TRUE" />
     <File Path="Scripts\toaster.js" Url="Scripts/toaster.js" ReplaceContent="TRUE" />
     <File Path="Scripts\ui-grid.min.js" Url="Scripts/ui-grid.min.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\select.min.js.map" Url="Scripts/select.min.js.map" ReplaceContent="TRUE" />
+    <File Path="Scripts\select.min.js" Url="Scripts/select.min.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\select.js" Url="Scripts/select.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\angular-ui-switch.min.js" Url="Scripts/angular-ui-switch.min.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\angular-ui-switch.js" Url="Scripts/angular-ui-switch.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>

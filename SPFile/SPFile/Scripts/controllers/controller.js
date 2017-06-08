@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster', 'ui.grid.selection']);
+    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster', 'ui.grid.selection', 'ui.select', "uiSwitch"]);
 
     //on page load
     angular.element(document)
@@ -341,7 +341,7 @@
 
     angular.module('Abs')
         .controller('permissionsModal',
-            function ($uibModalInstance,$q,$log, items, url, listId) {
+            function ($uibModalInstance, $uibModal, $q, $log, items, url, listId) {
                 var $ctrl = this;
 
                 $ctrl.gridOptions = {
@@ -358,10 +358,12 @@
                     }
                 };
 
+                $ctrl.hasUniq = false;
 
                 var refresh = function() {
                     items.forEach(function(item) {
                         getGroupList(url, listId, item.ID);
+                        checkRoleInheritance(url, listId, item.ID);
                     });
                 }
 
@@ -369,7 +371,23 @@
                 
 
                 $ctrl.grant = function() {
-                   // onStart(); //tmp
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'grantPermissionModal.html',
+                        controller: 'grantPermissionsModal',
+                        controllerAs: '$ctrl'
+                    });
+                    modalInstance.result.then(function (outObjects) {
+                        items.forEach(function (itemObject) {
+                            outObjects.permissions.forEach(function (permission) {
+                                addToRole(url, permission, outObjects.role, itemObject.ID, listId);
+                            });
+
+                        });
+
+                    }, function () {
+                        $log.info('Modal dismissed at: ' + new Date());
+                    });
                     $log.log($ctrl.gridApi.selection.getSelectedRows());
                 };
                 $ctrl.create = function() {
@@ -379,8 +397,10 @@
                     var url = itnew.join('/');
                     window.open(url + "/_layouts/groups.aspx");
                 };
-                $ctrl.edit = function() {
-                    
+                $ctrl.edit = function () {
+                    resetInheritance(url, listId, items[0]);
+
+                    //  breakRoleInheritance(url, listId, items[0].ID, true,false);
                 };
                 $ctrl.delete = function() {
                     deleteSelectedPermissions().finally(function () {
@@ -389,6 +409,38 @@
                     
                 };
 
+                $ctrl.roleInheritance = function () {
+
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'chooseRoleInheritanceModal.html',
+                        controller: 'chooseRoleInheritanceModal',
+                        controllerAs: '$ctrl',
+                        resolve: {
+                            inheritance: function () {
+                                return $ctrl.hasUniq;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (out) {
+                        if (!out.isInheritance) {
+                            items.forEach(function(itemObject) {
+                                resetInheritance(url, listId, itemObject, out.applyToChild);
+                            });
+                        } else {
+                            items.forEach(function (itemObject) {
+                                breakRoleInheritance(url, listId, itemObject.ID, out.applyToChild);
+                            });
+                        }
+                        $ctrl.hasUniq = out.isInheritance;
+                        $log.log("isInheritance: " + out.isInheritance);
+                        $log.log("applyToChild: " + out.applyToChild);
+
+                    }, function () {
+                        $log.info('Modal dismissed at: ' + new Date());
+                    });
+
+                }
 
                 $ctrl.addRoles = function () {
 
@@ -435,9 +487,34 @@
                     return defered.promise;
                 }
 
-                var start = refresh();
+                var renew = refresh();
+               // var setInher = checkRoleInheritance();
                 
+                function addToRole(url,item, role, itemId, listId) {
 
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var list = web.get_lists().getById(listId);
+                    var targetItem = list.getItemById(itemId);
+                    var itemObj;
+
+                    if (item.principalType == 1) {
+                        itemObj = web.get_siteUsers().getById(item.id);
+                    } else {
+                        itemObj = web.get_siteGroups().getById(item.id);
+                    }
+                    var roleDefinition = web.get_roleDefinitions().getById(role.id);
+                    var collRoleDefinitionBinding = SP.RoleDefinitionBindingCollection.newObject(ctx);
+
+                    collRoleDefinitionBinding.add(roleDefinition);
+
+                    var rollAssignment = targetItem.get_roleAssignments();
+                    rollAssignment.add(itemObj, collRoleDefinitionBinding);
+
+                    ctx.executeQueryAsync(
+                        function() {$log.log("done")},
+                        function (sender, args) { $log.log(args.get_message()) });
+                }
 
                 function getGroupList(url, listId, itemId) {
                     var ctx = new SP.ClientContext(url);
@@ -498,9 +575,7 @@
 
                         });
                 };
-
-              
-
+            
                 function getItemPermissions(ctx, role) {
                     var defered = $q.defer();
                     var defenition = role.get_roleDefinitionBindings();
@@ -550,8 +625,69 @@
                     return $q.all(promises);
                 }
 
+                function checkRoleInheritance(url, listId, itemId) {
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var list = web.get_lists().getById(listId);
+                    var item = list.getItemById(itemId);
+                    ctx.load(item, "HasUniqueRoleAssignments");
+                    ctx.executeQueryAsync(
+                        function () {
+                            if (item.get_hasUniqueRoleAssignments()) {
+                                $ctrl.hasUniq = true;
+                            };
+                            $log.log(item);
+                            $log.log("done");
+                        },
+                        function (sender, args) { $log.log(args.get_message()) });
+                }
 
-                //$ctrl.$watch($ctrl.gridOptions.data, $ctrl.gridOptions.dataShow);
+                function breakRoleInheritance(url, listId, itemId, copyRoleAssignments, clearSubscopes) {
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var list = web.get_lists().getById(listId);
+                    var item = list.getItemById(itemId);
+
+
+                    item.breakRoleInheritance(copyRoleAssignments, clearSubscopes);
+                    ctx.executeQueryAsync(
+                        function () {
+                            $log.log("done");
+                        },
+                        function (sender, args) { $log.log(args.get_message()) });
+                }
+
+                function resetInheritance(url, listId, item, includeSubscopes) {
+                    var ctx = new SP.ClientContext(url);
+                    var list = ctx.get_web().get_lists().getById(listId);
+                    var rootItem = list.getItemById(item.ID);
+                    rootItem.resetRoleInheritance();
+
+                    if (includeSubscopes) {
+                        var caml = SP.CamlQuery.createAllItemsQuery();
+                        caml.set_viewXml("<View Scope='RecursiveAll'><Query></Query></View>");
+                        caml.set_folderServerRelativeUrl(item.FileRef);
+                        var subItems = list.getItems(caml);
+
+                        ctx.load(subItems);
+                        ctx.executeQueryAsync(function() {
+                                var subItemsEnumerator = subItems.getEnumerator();
+                                while (subItemsEnumerator.moveNext()) {
+                                    var currentItem = subItemsEnumerator.get_current();
+                                    currentItem.resetRoleInheritance();
+                                    ctx.executeQueryAsync();
+                                }
+
+                            },
+                            function() {
+
+                            });
+                    } else {
+                        ctx.executeQueryAsync();
+                    }
+                }
+            
+
                 $ctrl.ok = function () {
                     $uibModalInstance.close($ctrl.text);
                 };
@@ -559,6 +695,173 @@
                     $uibModalInstance.dismiss('cancel');
                 };
             });
+
+
+    angular.module('Abs')
+    .controller('grantPermissionsModal',
+        function ($uibModalInstance, $log, $q) {
+            var $ctrl = this;
+            $ctrl.text = "New Folder";
+            $ctrl.editRoles = function () {
+
+                var someTmp = GetUrlKeyValue("SPAppWebUrl");
+                var it = someTmp.split('/');
+                var itnew = it.slice(0, it.length - 1);
+                var url = itnew.join('/');
+                window.open(url + "/_layouts/addrole.aspx");
+            };
+
+            var onStartGroups = getAllUsersAndGroups();
+            var onStartRoles = getAllRoleDefinitions();
+
+            $ctrl.permissionItemSelected = [];
+            $ctrl.roleItemsSelected = [];
+
+            $ctrl.permissionItem = [];
+            $ctrl.roleDefinitionsItems = [];
+
+            var enumPrincipalType = {
+                0: "none",
+                1: "user",
+                2: "Distribution List",
+                4: "Security Group",
+                8: "SharePoint Group",
+                15: "All"
+            };
+            function getPrincipalTypeValue(key) {
+                return enumPrincipalType[key];
+            }
+            function getAllUsersAndGroups(url) {
+                var ctx = new SP.ClientContext(url);
+                var web = ctx.get_web();
+                var groups = web.get_siteGroups();
+                var users = web.get_siteUsers();
+                ctx.load(groups);
+                ctx.load(users);
+                ctx.executeQueryAsync(function () {
+                    var groupsEnumerator = groups.getEnumerator();
+                    while (groupsEnumerator.moveNext()) {
+                        var group = groupsEnumerator.get_current();
+                        $ctrl.permissionItem.push({
+                            name: group.get_title(),
+                            id: group.get_id(),
+                            principalType: group.get_principalType(),
+                            type: getPrincipalTypeValue(group.get_principalType())
+                        });
+                    }
+                    var usersEnumerator = users.getEnumerator();
+                    while (usersEnumerator.moveNext()) {
+                        var user = usersEnumerator.get_current();
+                        $ctrl.permissionItem.push({
+                            name: user.get_title(),
+                            id: user.get_id(),
+                            principalType: user.get_principalType(),
+                            type: getPrincipalTypeValue(user.get_principalType())
+                        });
+                    }
+                    $log.log($ctrl.permissionItem);
+
+                }, function () {
+                    $log.log("no user");
+
+                });
+
+            };
+
+            function getAllRoleDefinitions(url) {
+                var ctx = new SP.ClientContext(url);
+                var web = ctx.get_web();
+                var roles = web.get_roleDefinitions();
+                ctx.load(roles);
+                ctx.executeQueryAsync(function () {
+                    var rolesEnumerator = roles.getEnumerator();
+                    while (rolesEnumerator.moveNext()) {
+                        var role = rolesEnumerator.get_current();
+                        var roleName = role.get_name();
+                        var roleId = role.get_id();
+                        $ctrl.roleDefinitionsItems.push({
+                            name: roleName,
+                            id: roleId
+                        });
+
+                    }
+                }, function () {
+
+                });
+            };
+ 
+            $ctrl.addBtnClicked = function () {
+                if ($ctrl.out != undefined && $ctrl.out.name != undefined) {
+                    if (findIndex($ctrl.out.id) == -1) {
+                        $ctrl.usersAndGroups.push($ctrl.out);
+                        $ctrl.out = undefined;
+                    }
+                } else {
+
+                };
+                $ctrl.out = undefined; //clear only
+            };
+
+            $ctrl.ok = function() {
+                $uibModalInstance.close({
+                    permissions: $ctrl.permissionItemSelected,
+                    role: $ctrl.roleItemsSelected
+                });
+            };
+            $ctrl.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+        });
+
+    angular.module('Abs')
+    .controller("chooseRoleInheritanceModal",
+        function ($uibModalInstance, $log, inheritance) {
+            var $ctrl = this;
+            $ctrl.isInheritance = inheritance;
+            $ctrl.applyToChild = false;
+
+            $ctrl.ok = function () {
+                $uibModalInstance.close({ isInheritance: $ctrl.isInheritance, applyToChild: $ctrl.applyToChild });
+            };
+            $ctrl.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+        });
+
+    angular.module('Abs')
+        .filter('propsFilter',
+            function () {
+                return function (items, props) {
+                    var out = [];
+
+                    if (angular.isArray(items)) {
+                        var keys = Object.keys(props);
+
+                        items.forEach(function (item) {
+                            var itemMatches = false;
+
+                            for (var i = 0; i < keys.length; i++) {
+                                var prop = keys[i];
+                                var text = props[prop].toLowerCase();
+                                if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+                                    itemMatches = true;
+                                    break;
+                                }
+                            }
+
+                            if (itemMatches) {
+                                out.push(item);
+                            }
+                        });
+                    } else {
+                        // Let the output be the input untouched
+                        out = items;
+                    }
+
+                    return out;
+                };
+            });
+
 
     angular.module('Abs')
         .controller('DropdownCtrl',
@@ -888,7 +1191,6 @@
                     $scope.upBtndisabled = true;
                     $scope.getLibrariesOnly();
                     alert("failed. Message:" + args.get_message());
-
                 }
 
                 $scope.$on('selectedEvent', function(event, args) {
