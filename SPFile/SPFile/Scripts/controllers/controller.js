@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster', 'ui.grid.selection', 'ui.select', "uiSwitch"]);
+    angular.module('Abs', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'TreeWidget', 'ngTouch', 'ui.grid', 'ngSelectable', 'toaster', 'ui.grid.selection', 'ui.select', "uiSwitch", "ui.indeterminate"]);
 
     //on page load
     angular.element(document)
@@ -360,12 +360,21 @@
 
                 $ctrl.hasUniq = false;
 
-                var refresh = function() {
+                var refresh = function () {
+                    $ctrl.gridOptions.data = [];
                     items.forEach(function(item) {
                         getGroupList(url, listId, item.ID);
                         checkRoleInheritance(url, listId, item.ID);
                     });
                 }
+                function findIndex(array, serchItemId) {
+                    var elements = array.map(function (x) {
+                        return x.id;
+                    }).indexOf(serchItemId);
+                    // var objFound = $ctrl.gridOptions.data[elements];
+                    return elements;
+                };
+
 
                 $ctrl.text = "New Folder";
                 
@@ -378,13 +387,7 @@
                         controllerAs: '$ctrl'
                     });
                     modalInstance.result.then(function (outObjects) {
-                        items.forEach(function (itemObject) {
-                            outObjects.permissions.forEach(function (permission) {
-                                addToRole(url, permission, outObjects.role, itemObject.ID, listId);
-                            });
-
-                        });
-
+                        grantPermissions(outObjects).finally(function () { refresh(); });
                     }, function () {
                         $log.info('Modal dismissed at: ' + new Date());
                     });
@@ -398,9 +401,86 @@
                     window.open(url + "/_layouts/groups.aspx");
                 };
                 $ctrl.edit = function () {
-                    resetInheritance(url, listId, items[0]);
+                    if ($ctrl.gridApi.selection.getSelectedRows().length > 0)
+                        {
+                            getAllRoleDefinitions(url)
+                                .then(function(allDefs) {
+                                    var allList = createIndeterminateDefList();
+                                    var sameDefList = createDefList();
+                                    var allSiteDefs = allDefs.map(function(e) {
+                                        return {
+                                            description: e.description,
+                                            id: e.id,
+                                            name: e.name,
+                                            selected: false,
+                                            indeterminate: false
+                                        };
+                                    });
 
-                    //  breakRoleInheritance(url, listId, items[0].ID, true,false);
+                                    allList.forEach(function(defId) {
+                                        var index = findIndex(allSiteDefs, defId);
+                                        if (index != -1) {
+                                            allSiteDefs[index].indeterminate = true;
+                                        }
+                                    });
+
+                                    sameDefList.forEach(function(defId) {
+                                        var index = findIndex(allSiteDefs, defId);
+                                        if (index != -1) {
+                                            allSiteDefs[index].selected = true;
+                                            allSiteDefs[index].indeterminate = false;
+                                        }
+                                    });
+
+                                    var oldDefs = allSiteDefs.map(function(e) { return { selected: e.selected } });
+
+                                    var modalInstance = $uibModal.open({
+                                        animation: true,
+                                        templateUrl: 'editPermissionsModal.html',
+                                        controller: 'editPermissionsModal',
+                                        controllerAs: '$ctrl',
+                                        resolve: {
+                                            allList: function() {
+                                                return allSiteDefs;
+                                            }
+                                        }
+                                    });
+
+                                    $log.log(oldDefs);
+                                    modalInstance.result.then(function (out) {
+                                            editSelectedPermissions(out, oldDefs).finally(function() { refresh(); });
+                                            //out.forEach(function(item, i) {
+                                            //    if (item.selected != oldDefs[i].selected) {
+                                            //        items.forEach(function(itemObject) {
+                                            //            var selectedItems = $ctrl.gridApi.selection.getSelectedRows();
+                                            //            selectedItems.forEach(function(selectedItem) {
+                                            //                if (item.selected) {
+                                            //                    addToRole(url,
+                                            //                        {
+                                            //                            id: selectedItem.id,
+                                            //                            principalType: selectedItem.principalType
+                                            //                        },
+                                            //                        item.id,
+                                            //                        itemObject.ID,
+                                            //                        listId);
+                                            //                } else {
+                                            //                    deleteDefenition(url,
+                                            //                        listId,
+                                            //                        itemObject.ID,
+                                            //                        selectedItem.id,
+                                            //                        item.id);
+                                            //                }
+
+                                            //            });
+                                            //        });
+                                            //    }
+
+                                            //});
+                                        },
+                                        function() {
+                                            $log.info('Modal dismissed at: ' + new Date());
+                                        });
+                                });}                                      
                 };
                 $ctrl.delete = function() {
                     deleteSelectedPermissions().finally(function () {
@@ -470,6 +550,66 @@
                     return $q.all(promises);
                 }
 
+                function editSelectedPermissions(out, oldDefs) {
+                    var promises = out.map(function(item, i) {
+                        var defered = $q.defer();
+                        if (item.selected != oldDefs[i].selected) {
+                            items.forEach(function(itemObject) {
+                                var selectedItems = $ctrl.gridApi.selection.getSelectedRows();
+                                selectedItems.forEach(function(selectedItem) {
+                                    if (item.selected) {
+                                        addToRole(url,
+                                                {
+                                                    id: selectedItem.id,
+                                                    principalType: selectedItem.principalType
+                                                },
+                                                item.id,
+                                                itemObject.ID,
+                                                listId)
+                                            .then(function() {
+                                                    defered.resolve();
+                                                },
+                                                function() {
+                                                    defered.reject();
+                                                });
+                                    } else {
+                                        deleteDefenition(url,
+                                                listId,
+                                                itemObject.ID,
+                                                selectedItem.id,
+                                                item.id)
+                                            .then(function() {
+                                                    defered.resolve();
+                                                },
+                                                function() {
+                                                    defered.reject();
+                                                });
+                                    }
+
+                                });
+                            });
+                        }
+                    });
+                    return $q.all(promises);
+                }
+
+                function grantPermissions(outObjects) {
+                    var promises = items.map(function(itemObject) {
+                        var defered = $q.defer();
+                        outObjects.permissions.forEach(function(permission) {
+                            addToRole(url, permission, outObjects.role.id, itemObject.ID, listId)
+                                .then(function() {
+                                        defered.resolve();
+                                    },
+                                    function() {
+                                        defered.reject();
+                                    });;
+                        });
+                        return defered.promise;
+                    });
+                    return $q.all(promises);
+                }
+
                 function deletePermission(url, listId, itemId, principalId) {
                     var defered = $q.defer();
                     var ctx = new SP.ClientContext(url);
@@ -486,12 +626,53 @@
                     });
                     return defered.promise;
                 }
+            
+                function deleteDefenition(url, listId, itemId, roleId, defenitionId) {
+                    var defered = $q.defer();
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var list = web.get_lists().getById(listId);
+                    var item = list.getItemById(itemId);
+
+                    var tmp = item.get_roleAssignments();
+
+                    var roles = item.get_roleAssignments().getByPrincipalId(roleId);
+                    var defenition = roles.get_roleDefinitionBindings();
+                    ctx.load(item);
+                    ctx.load(defenition);
+
+                    ctx.executeQueryAsync(function () {
+                        var defEnumerator = defenition.getEnumerator();
+                        while (defEnumerator.moveNext()) {
+                            var defItem = defEnumerator.get_current();
+                            var dId = defItem.get_id();
+
+                            $log.log(defItem.get_name());
+                            if (dId == defenitionId) {
+                                defenition.remove(defItem);
+                                roles.update();
+                                ctx.load(defenition);
+                                ctx.executeQueryAsync(function () {
+                                    defered.resolve();
+                                        $log.log("done");
+                                    },
+                                    function(sender, args) { $log.log(args.get_message()) });
+                                break;
+                            }
+
+                        }
+                        
+                    }, function () {
+                        defered.reject();
+                    });
+                    return defered.promise;
+                }
 
                 var renew = refresh();
                // var setInher = checkRoleInheritance();
                 
-                function addToRole(url,item, role, itemId, listId) {
-
+                function addToRole(url,item, roleId, itemId, listId) {
+                    var defered = $q.defer();
                     var ctx = new SP.ClientContext(url);
                     var web = ctx.get_web();
                     var list = web.get_lists().getById(listId);
@@ -503,7 +684,7 @@
                     } else {
                         itemObj = web.get_siteGroups().getById(item.id);
                     }
-                    var roleDefinition = web.get_roleDefinitions().getById(role.id);
+                    var roleDefinition = web.get_roleDefinitions().getById(roleId);
                     var collRoleDefinitionBinding = SP.RoleDefinitionBindingCollection.newObject(ctx);
 
                     collRoleDefinitionBinding.add(roleDefinition);
@@ -512,8 +693,9 @@
                     rollAssignment.add(itemObj, collRoleDefinitionBinding);
 
                     ctx.executeQueryAsync(
-                        function() {$log.log("done")},
-                        function (sender, args) { $log.log(args.get_message()) });
+                        function () { $log.log("done"); defered.resolve(); },
+                        function (sender, args) { $log.log(args.get_message()); defered.reject(); });
+                    return defered.promise;
                 }
 
                 function getGroupList(url, listId, itemId) {
@@ -540,7 +722,7 @@
                                         var out = [];
 
                                         results.forEach(function(item, i) {
-                                            var itemIndex = findIndex(item.id);
+                                            var itemIndex = findIndex($ctrl.gridOptions.data, item.id);
                                             if (itemIndex != -1) {
                                                 Array.prototype.defUniq = function(a) {
                                                     return this.filter(function(b) {
@@ -581,22 +763,26 @@
                     var defenition = role.get_roleDefinitionBindings();
                     var member = role.get_member();
                     ctx.load(defenition);
-                    ctx.load(member, "Title");
+                    ctx.load(member, 'Title');
+                    ctx.load(member, 'PrincipalType');
                     ctx.executeQueryAsync(function() {
                             $log.log(member.get_title());
                             var defEnumerator = defenition.getEnumerator();
                             var defenitionsItems = [];
+                            var defenitionsItemsString = [];
                             while (defEnumerator.moveNext()) {
                                 var defItem = defEnumerator.get_current();
                                 //defenitionsItems.push({ name: defItem.get_name(), id: defItem.get_id() });
-                                defenitionsItems.push(defItem.get_name());
+                                defenitionsItems.push(defItem.get_id());
+                                defenitionsItemsString.push(defItem.get_name());
                             }
                             // singlItems.push({ name: member.get_title(), id: role.get_principalId(), defenitions: defenitionsItems });
                             defered.resolve({
                                 name: member.get_title(),
                                 id: role.get_principalId(),
                                 defenitions: defenitionsItems,
-                                defenition: defenitionsItems.join(', ')
+                                defenition: defenitionsItemsString.join(', '), 
+                                principalType: member.get_principalType()
                             });
                             $log.log("Done");
                         },
@@ -604,15 +790,7 @@
                             defered.reject();
                         });
                     return defered.promise;
-                }
-               
-                function findIndex(serchItemId) {
-                    var elements = $ctrl.gridOptions.data.map(function (x) {
-                        return x.id;
-                    }).indexOf(serchItemId);
-                   // var objFound = $ctrl.gridOptions.data[elements];
-                    return elements;
-                };
+                }              
 
                 function getAllRoles(roles, ctx) {
                     var promises = roles.map(function (role) {
@@ -642,14 +820,14 @@
                         function (sender, args) { $log.log(args.get_message()) });
                 }
 
-                function breakRoleInheritance(url, listId, itemId, copyRoleAssignments, clearSubscopes) {
+                function breakRoleInheritance(url, listId, itemId, clearSubscopes) {
                     var ctx = new SP.ClientContext(url);
                     var web = ctx.get_web();
                     var list = web.get_lists().getById(listId);
                     var item = list.getItemById(itemId);
 
 
-                    item.breakRoleInheritance(copyRoleAssignments, clearSubscopes);
+                    item.breakRoleInheritance(true, clearSubscopes);
                     ctx.executeQueryAsync(
                         function () {
                             $log.log("done");
@@ -686,7 +864,76 @@
                         ctx.executeQueryAsync();
                     }
                 }
-            
+
+                function createDefList() {
+                    var selItems = $ctrl.gridApi.selection.getSelectedRows();
+
+                    var arrays = selItems.reduce(function (res, v) {
+                        res.push(v.defenitions);
+                        return res;
+                    }, []);
+
+                    var result = arrays.shift().reduce(function (res, v) {
+                        if (arrays.every(function (a) {
+                            //console.log(findIndex(a, v.id).length)
+                        return a.indexOf(v) !== -1;
+                        })) res.push(v);
+                        return res;
+                    }, []);
+                    return result;
+                }
+
+                function createIndeterminateDefList() {
+                    Array.prototype.unique = function() {
+                        var a = this.concat();
+                        for (var i = 0; i < a.length; ++i) {
+                            for (var j = i + 1; j < a.length; ++j) {
+                                if (a[i] === a[j])
+                                    a.splice(j--, 1);
+                            }
+                        }
+                        return a;
+                    }
+                    var selItems = $ctrl.gridApi.selection.getSelectedRows();
+
+                    var arrays = selItems.reduce(function (res, v) {
+                        res.push(v.defenitions);
+                        return res;
+                    }, []);
+
+                    var flattened = arrays.reduce(function (res, v) {
+                        return res.concat(v);
+                    }).unique();
+                    return flattened;
+                }
+
+                function getAllRoleDefinitions(url) {
+                    var defered = $q.defer();
+                    var ctx = new SP.ClientContext(url);
+                    var web = ctx.get_web();
+                    var roles = web.get_roleDefinitions();
+                    var roleDefinitionsItems = [];
+                    ctx.load(roles);
+                    ctx.executeQueryAsync(function () {
+                        var rolesEnumerator = roles.getEnumerator();
+                        while (rolesEnumerator.moveNext()) {
+                            var role = rolesEnumerator.get_current();
+                            var roleName = role.get_name();
+                            var roleId = role.get_id();
+                            roleDefinitionsItems.push({
+                                name: roleName,
+                                id: roleId,
+                                description: role.get_description()
+                        });
+                            
+                        }
+                        defered.resolve(roleDefinitionsItems);
+                    }, function () {
+                        defered.reject();
+                    });
+                    return defered.promise;
+                };
+
 
                 $ctrl.ok = function () {
                     $uibModalInstance.close($ctrl.text);
@@ -827,6 +1074,23 @@
                 $uibModalInstance.dismiss('cancel');
             };
         });
+
+    angular.module('Abs')
+        .controller('editPermissionsModal',
+            function ($uibModalInstance, $log, $q, allList) {
+                var $ctrl = this;
+                $ctrl.text = "New Folder";
+                $ctrl.list = allList;
+
+                $ctrl.ok = function () {
+                    $uibModalInstance.close($ctrl.list);
+                };
+                $ctrl.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            });
+
+
 
     angular.module('Abs')
         .filter('propsFilter',

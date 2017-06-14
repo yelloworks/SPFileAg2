@@ -71,5 +71,6 @@
     <File Path="Content\select.css" Url="Content/select.css" ReplaceContent="TRUE" />
     <File Path="Content\angular-ui-switch.min.css" Url="Content/angular-ui-switch.min.css" ReplaceContent="TRUE" />
     <File Path="Content\angular-ui-switch.css" Url="Content/angular-ui-switch.css" ReplaceContent="TRUE" />
+    <File Path="Content\permissionModal.css" Url="Content/permissionModal.css" ReplaceContent="TRUE" />
   </Module>
 </Elements>

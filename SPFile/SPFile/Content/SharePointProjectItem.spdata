@@ -72,5 +72,6 @@
     <ProjectItemFile Source="select.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="angular-ui-switch.min.css" Target="Content\" Type="ElementFile" />
     <ProjectItemFile Source="angular-ui-switch.css" Target="Content\" Type="ElementFile" />
+    <ProjectItemFile Source="permissionModal.css" Target="Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>

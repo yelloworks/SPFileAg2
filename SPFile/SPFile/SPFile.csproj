@@ -74,6 +74,7 @@
     <Content Include="Content\img\file.png" />
     <Content Include="Content\img\folder-closed.png" />
     <Content Include="Content\img\folder-open.png" />
+    <Content Include="Content\permissionModal.css" />
     <Content Include="Content\select.css" />
     <Content Include="Content\select.min.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -125,6 +126,7 @@
     <Content Include="Elements.xml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Pages\chooseRoleInheritanceModal.html" />
+    <Content Include="Pages\editPermissionsModal.html" />
     <Content Include="Pages\Elements.xml" />
     <Content Include="Pages\Default.aspx" />
     <None Include="RibbonActionButton\SharePointProjectItem.spdata">
@@ -172,6 +174,7 @@
     <Content Include="Scripts\i18n\angular-locale_bem.js" />
     <Content Include="Scripts\i18n\angular-locale_en-001.js" />
     <Content Include="Scripts\i18n\angular-locale_en-be.js" />
+    <Content Include="Scripts\indeterminate.js" />
     <Content Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />

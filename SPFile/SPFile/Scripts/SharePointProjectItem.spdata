@@ -33,5 +33,6 @@
     <ProjectItemFile Source="select.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="angular-ui-switch.min.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="angular-ui-switch.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="indeterminate.js" Target="Scripts\" Type="ElementFile" />
   </Files>
 </ProjectItem>

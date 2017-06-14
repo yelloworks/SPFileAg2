@@ -32,5 +32,6 @@
     <File Path="Scripts\select.js" Url="Scripts/select.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-ui-switch.min.js" Url="Scripts/angular-ui-switch.min.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-ui-switch.js" Url="Scripts/angular-ui-switch.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\indeterminate.js" Url="Scripts/indeterminate.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>

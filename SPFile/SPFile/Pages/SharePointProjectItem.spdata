@@ -9,5 +9,6 @@
     <ProjectItemFile Source="permissionsModal.html" Target="Pages\" Type="ElementFile" />
     <ProjectItemFile Source="grantPermissionModal.html" Target="Pages\" Type="ElementFile" />
     <ProjectItemFile Source="chooseRoleInheritanceModal.html" Target="Pages\" Type="ElementFile" />
+    <ProjectItemFile Source="editPermissionsModal.html" Target="Pages\" Type="ElementFile" />
   </Files>
 </ProjectItem>

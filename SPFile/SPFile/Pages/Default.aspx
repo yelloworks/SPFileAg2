@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css">
     <link rel="stylesheet" href="../Content/angular-ui-switch.css">
     <link rel="stylesheet" href="../Content/select.css">
+    <link rel="stylesheet" href="../Content/permissionModal.css">
     <%--<link rel ="stylesheet" type="text/css"href="../Content/toaster.css">--%>
 
     <link rel ="Stylesheet" type="text/css" href="../Content/App.css" />
@@ -44,6 +45,7 @@
     <%--<script type="text/javascript" src="../Scripts/angular-sanitize.js"></script>--%>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-touch.js" type="text/javascript"></script>
     <%--<script type="text/javascript" src="../Scripts/angular-touch.js"></script>--%>
+    <script type="text/javascript" src="../Scripts/indeterminate.js"></script>
     
 
     <script type="text/javascript" src="../Scripts/bootstrap.min.js"></script>
