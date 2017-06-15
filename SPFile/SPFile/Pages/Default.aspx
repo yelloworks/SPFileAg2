@@ -62,6 +62,11 @@
     <script type="text/javascript" src="../Scripts/select.js"></script>  
     <script type="text/javascript" src="../Scripts/App.js"></script>
     <script type="text/javascript" src ="../Scripts/controllers/controller.js"> </script>
+    <script type="text/javascript" src="../Scripts/controllers/modals.js"></script>
+    <script type="text/javascript" src="../Scripts/controllers/modalsPermissions.js"></script>
+    <script type="text/javascript" src="../Scripts/controllers/tabsAndContent.js"></script>
+    <script type="text/javascript" src="../Scripts/servisies/buffers.js"></script>
+    <script type="text/javascript" src="../Scripts/servisies/operations.js"></script>
     <script type ="text/javascript" src ="../Scripts/context.js"></script>
     <script type ="text/javascript" src ="../Scripts/directives/ribbonMenu.js"></script>
 

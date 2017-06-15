@@ -33,5 +33,10 @@
     <File Path="Scripts\angular-ui-switch.min.js" Url="Scripts/angular-ui-switch.min.js" ReplaceContent="TRUE" />
     <File Path="Scripts\angular-ui-switch.js" Url="Scripts/angular-ui-switch.js" ReplaceContent="TRUE" />
     <File Path="Scripts\indeterminate.js" Url="Scripts/indeterminate.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\controllers\modals.js" Url="Scripts/controllers/modals.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\controllers\tabsAndContent.js" Url="Scripts/controllers/tabsAndContent.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\servisies\operations.js" Url="Scripts/servisies/operations.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\servisies\buffers.js" Url="Scripts/servisies/buffers.js" ReplaceContent="TRUE" />
+    <File Path="Scripts\controllers\modalsPermissions.js" Url="Scripts/controllers/modalsPermissions.js" ReplaceContent="TRUE" />
   </Module>
 </Elements>

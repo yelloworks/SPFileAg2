@@ -34,5 +34,10 @@
     <ProjectItemFile Source="angular-ui-switch.min.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="angular-ui-switch.js" Target="Scripts\" Type="ElementFile" />
     <ProjectItemFile Source="indeterminate.js" Target="Scripts\" Type="ElementFile" />
+    <ProjectItemFile Source="controllers\modals.js" Target="Scripts\controllers\" Type="ElementFile" />
+    <ProjectItemFile Source="controllers\tabsAndContent.js" Target="Scripts\controllers\" Type="ElementFile" />
+    <ProjectItemFile Source="servisies\operations.js" Target="Scripts\servisies\" Type="ElementFile" />
+    <ProjectItemFile Source="servisies\buffers.js" Target="Scripts\servisies\" Type="ElementFile" />
+    <ProjectItemFile Source="controllers\modalsPermissions.js" Target="Scripts\controllers\" Type="ElementFile" />
   </Files>
 </ProjectItem>

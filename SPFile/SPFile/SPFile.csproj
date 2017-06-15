@@ -164,6 +164,11 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\context.js" />
     <Content Include="Scripts\controllers\controller.js" />
+    <Content Include="Scripts\controllers\modals.js" />
+    <Content Include="Scripts\controllers\modalsPermissions.js" />
+    <Content Include="Scripts\servisies\buffers.js" />
+    <Content Include="Scripts\servisies\operations.js" />
+    <Content Include="Scripts\controllers\tabsAndContent.js" />
     <Content Include="Scripts\directives\ribbonMenu.js" />
     <Content Include="Scripts\Elements.xml" />
     <Content Include="Scripts\App.js" />
