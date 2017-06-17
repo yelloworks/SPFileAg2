@@ -1,7 +1,8 @@
-﻿<div class="modal-header">
+﻿<toaster-container toaster-options="{'close-button':false, 'time-out':{ 'toast-warning': 0, 'toast-error': 0 }, 'toaster-id': 1 } "></toaster-container>
+<div class="modal-header">   
     <div class="menu-panel-group">
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.grant()" ng-disabled ="!$ctrl.hasUniq"><br>Grant permissions </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.grant()" ng-disabled="!$ctrl.hasUniq"><br>Grant permissions </button>
         </div>
         <div class="menu-btn-group">
             <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.create()"><br>Create group </button>
@@ -9,10 +10,10 @@
     </div>
     <div class="menu-panel-group">
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.edit()" ng-disabled ="!$ctrl.hasUniq"><br>Edit permission </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.edit()" ng-disabled="!$ctrl.hasUniq"><br>Edit permission </button>
         </div>
         <div class="menu-btn-group">
-            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.delete()" ng-disabled ="!$ctrl.hasUniq"><br>Delete </button>
+            <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.delete()" ng-disabled="!$ctrl.hasUniq"><br>Delete </button>
         </div>
     </div>
     <div class="menu-panel-group">
@@ -20,7 +21,7 @@
             <button type="button" class="btn-primary btn-lg menu-btn-big" ng-click="$ctrl.roleInheritance()"><br>Role Inheritance </button>
         </div>
     </div>
-    </div>
+</div>
 <div class="modal-body" id="modal-body">
     <div id="grid1" ui-grid="$ctrl.gridOptions" ui-grid-selection class="grid"></div>
 </div>

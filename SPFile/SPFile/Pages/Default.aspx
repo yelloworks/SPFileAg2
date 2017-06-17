@@ -98,14 +98,6 @@
         <%--<toaster-container toaster-options="{'close-button':false, 'time-out':{ 'toast-warning': 2000, 'toast-error': 0 } }"></toaster-container>--%>
         <ribbon-menu></ribbon-menu>        
         <div>
-<%--                <div ng-controller="TreeController">
-
-                    <div class="col-sm-4">
-                        <div class="tree-container">
-                            <tree nodes='treeNodes' options='options'></tree>
-                        </div>
-                    </div>
-                </div>--%>
 
            
             <div class = "col-sm-8" ng-controller="tabsCtrl">             
