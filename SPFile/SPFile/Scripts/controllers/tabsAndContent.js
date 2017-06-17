@@ -1,7 +1,7 @@
 ﻿(function () {
     angular.module('Abs')
     .controller('DropdownCtrl',
-        function ($scope, $log) {
+        function ($scope) {
 
             $scope.status = {
                 isopen: false
@@ -18,44 +18,35 @@
 
     angular.module('Abs')
         .controller('tabsCtrl',
-            function ($scope, $window, $timeout, $q) {
-                $scope.tabs = [
-
-                ];
+            function($scope, $window, $timeout, $q) {
+                $scope.tabs = [];
                 $scope.activeTab = 0;
 
-
-                /* $scope.alertMe = function() {
-                     setTimeout(function() {
-                         $window.alert('You\'ve selected the alert tab!');
-                     });
-                 };*/
                 $scope.model = {
                     name: 'Tabs'
                 };
 
-                $scope.onSelection = function ($index) {
+                $scope.onSelection = function($index) {
                     $scope.$broadcast('selectedEvent', $index);
                 };
-
 
                 function getSiteRootUrl(url) {
                     var deferred = $q.defer();
                     var ctx = new SP.ClientContext(url);
                     var web = ctx.get_web();
                     ctx.load(web);
-                    ctx.executeQueryAsync(function (sender, args) {
-                        deferred.resolve(web.get_serverRelativeUrl());
-                    }, function (sender, args) {
-                        deferred.reject(sender, args);
-                    });
+                    ctx.executeQueryAsync(function(sender, args) {
+                            deferred.resolve(web.get_serverRelativeUrl());
+                        },
+                        function(sender, args) {
+                            deferred.reject(sender, args);
+                        });
                     return deferred.promise;
                 };
 
-
-                var addNewWorkspace = function (url, listId, relativeUrl, folderName) {
+                var addNewWorkspace = function(url, listId, relativeUrl, folderName) {
                     getSiteRootUrl(url)
-                        .then(function (relSiteUrl) {
+                        .then(function(relSiteUrl) {
                             $scope.tabs.push({
                                 title: folderName,
                                 url: url,
@@ -63,33 +54,28 @@
                                 relativeUrl: relativeUrl,
                                 relativeSiteUrl: relSiteUrl
                             });
-                            $timeout(function () {
+                            $timeout(function() {
                                 $scope.activeTab = $scope.tabs.length - 1;
                             });
                         });
                 };
 
-                $scope.addWorkspace = function () {
-
+                $scope.addWorkspace = function() {
                     var url = window.location.protocol +
                         "//" +
                         window.location.host +
                         _spPageContextInfo.siteServerRelativeUrl;
-
                     addNewWorkspace(url, "", "", "root");
                 };
 
-                $scope.removeTab = function (index, event) {
+                $scope.removeTab = function(index, event) {
                     event.preventDefault();
                     $scope.tabs.splice(index, 1);
                 };
 
-
-                $scope.$on('pageInit', function (event, url, listId, relativeUrl, folderName) {
-                    addNewWorkspace(url, listId, relativeUrl, folderName);
-                });
-
-
+                $scope.$on('pageInit', function(event, url, listId, relativeUrl, folderName) {
+                        addNewWorkspace(url, listId, relativeUrl, folderName);
+                    });
             });
 
     angular
@@ -103,26 +89,8 @@
                 $scope.fileItems = [];
                 $scope.upBtndisabled = false;
                 $scope.adressArray = [];
-
-                $scope.doubleClick = function () {
-
-                    var item = $scope.selected[0];
-                    //Not rewrite, no sence
-                    // var url = $scope.tabs[$scope.index].url;
-                    if (item.type != 0) {
-                        $scope.fileItems = [];
-                        $scope.upBtndisabled = false;
-                        $scope.tabs[$scope.index].title = item.name;
-                        $scope.tabs[$scope.index].relativeUrl = item.FileRef;
-                        if ($scope.tabs[$scope.index].listId == "") {
-                            $scope.tabs[$scope.index].listId = item.libraryID;
-                        }
-                        $scope.getDir();
-                        setSelectedAndAdress();
-                    };
-                };
-
-                var getRelativeUrlString = function (parts) {
+             
+                function getRelativeUrlString (parts) {
                     var outItem = "";
                     parts.forEach(function (item, i, arr) {
                         outItem += "/" + item;
@@ -140,41 +108,61 @@
                     }
                     return arr;
                 }
-                $scope.getLibrariesOnly = function () {
-                    $scope.setAllButtonsDisabled();
-                    var url = $scope.tabs[$scope.index].url;
-                    var currentcontext = new SP.ClientContext(url);
-                    var currentweb = currentcontext.get_web();
-                    $scope.listCollection = currentweb.get_lists();
-                    currentcontext.load($scope.listCollection, 'Include(RootFolder, BaseTemplate, Title, Id)');
-                    currentcontext.executeQueryAsync(Function.createDelegate($scope, librariesExecuteOnSuccess),
-                        Function.createDelegate($scope, librariiesExecuteOnFailure));
-                }
 
                 function librariesExecuteOnSuccess(sender, args) {
                     var listEnumerator = $scope.listCollection.getEnumerator();
-                    var allLibs = "";
                     while (listEnumerator.moveNext()) {
                         var list = listEnumerator.get_current();
 
                         if (list.get_baseTemplate() == '101') {
                             $scope.fileItems.push({
                                 "name": list.get_title(),
-                                "FileRef": list.get_rootFolder().get_serverRelativeUrl(), //"\\" +
+                                "FileRef": list.get_rootFolder().get_serverRelativeUrl(),
                                 "libraryID": "{" + list.get_id() + "}"
                             });
                         }
                     }
                     $scope.$apply();
-                    // alert("All Libraries" + '\n' + allLibs);
                 }
                 function librariiesExecuteOnFailure(sender, args) {
                     alert("Error in Getting Lists");
                 }
+           
+                function viewLibrary() {
+                    $scope.fileItems = [];
+                    $scope.tabs[$scope.index].listId = "";
+                    $scope.tabs[$scope.index].title = "root";
+                    $scope.tabs[$scope.index].relativeUrl = "";
+                    $scope.upBtndisabled = true;
+                    $scope.getLibrariesOnly();
+                }
 
-                ///Переделать, вынести большую част операции в рожд контроллер, тут только проверку правильности оставить
+                function setSelectedAndAdress() {
+                    $scope.selected = [];
+                    selectedBufferService.setSelected($scope.selected, $scope.tabs[$scope.index]);
+                    $scope.adressArray = getAdressArray();
+                };
 
-                $scope.upBtnClicked = function () {
+                function getClearRelativeSiteUrlArray() {
+                    return $scope.tabs[$scope.index].relativeSiteUrl.split("/").slice(1);
+                };
+
+                $scope.doubleClick = function() {
+                    var item = $scope.selected[0];
+                    if (item.type != 0) {
+                        $scope.fileItems = [];
+                        $scope.upBtndisabled = false;
+                        $scope.tabs[$scope.index].title = item.name;
+                        $scope.tabs[$scope.index].relativeUrl = item.FileRef;
+                        if ($scope.tabs[$scope.index].listId == "") {
+                            $scope.tabs[$scope.index].listId = item.libraryID;
+                        }
+                        $scope.getDir();
+                        setSelectedAndAdress();
+                    };
+                };
+
+                $scope.upBtnClicked = function() {
                     var siteRelativeUrl = "";
                     if ($scope.tabs[$scope.index].relativeSiteUrl != '/') {
                         siteRelativeUrl = $scope.tabs[$scope.index].relativeSiteUrl;
@@ -193,25 +181,7 @@
                     setSelectedAndAdress();
                 };
 
-                function viewLibrary() {
-                    $scope.fileItems = [];
-                    $scope.tabs[$scope.index].listId = "";
-                    $scope.tabs[$scope.index].title = "root";
-                    $scope.tabs[$scope.index].relativeUrl = "";
-                    $scope.upBtndisabled = true;
-                    $scope.getLibrariesOnly();
-                }
-                function setSelectedAndAdress() {
-                    $scope.selected = [];
-                    selectedBufferService.setSelected($scope.selected, $scope.tabs[$scope.index]);
-                    $scope.adressArray = getAdressArray();
-                };
-
-                function getClearRelativeSiteUrlArray() {
-                    return $scope.tabs[$scope.index].relativeSiteUrl.split("/").slice(1);
-                };
-
-                $scope.adressItemClicked = function (index) {
+                $scope.adressItemClicked = function(index) {
                     if (index != 0) {
                         var pathPart = $scope.adressArray.slice(1, index + 1);
                         var newPath = getClearRelativeSiteUrlArray().concat(pathPart);
@@ -225,6 +195,14 @@
                     setSelectedAndAdress();
                 }
 
+                $scope.selectionStart = function() {
+                    $scope.log.push(($scope.log.length + 1) + ': selection start!');
+                };
+
+                $scope.selectionStop = function(selected) {
+                    selectedBufferService.setSelected(selected, $scope.tabs[$scope.index]);
+                    $scope.log.push(($scope.log.length + 1) + ': items selected: ' + selected.length);
+                };    
 
                 $scope.refreshPage = function () {
                     var siteRelativeUrl = "";
@@ -245,13 +223,6 @@
                     $scope.adressArray = getAdressArray();
                 };
 
-                $scope.selectionStart = function () {
-                    $scope.log.push(($scope.log.length + 1) + ': selection start!');
-                };
-                $scope.selectionStop = function (selected) {
-                    selectedBufferService.setSelected(selected, $scope.tabs[$scope.index]);
-                    $scope.log.push(($scope.log.length + 1) + ': items selected: ' + selected.length);
-                };
                 $scope.onStart = function ($index) {
                     $scope.index = $index;
                     $scope.adressArray = getAdressArray();
@@ -267,6 +238,19 @@
 
                 };
 
+
+
+                $scope.getLibrariesOnly = function () {
+                    $scope.setAllButtonsDisabled();
+                    var url = $scope.tabs[$scope.index].url;
+                    var currentcontext = new SP.ClientContext(url);
+                    var currentweb = currentcontext.get_web();
+                    $scope.listCollection = currentweb.get_lists();
+                    currentcontext.load($scope.listCollection, 'Include(RootFolder, BaseTemplate, Title, Id)');
+                    currentcontext.executeQueryAsync(Function.createDelegate($scope, librariesExecuteOnSuccess),
+                        Function.createDelegate($scope, librariiesExecuteOnFailure));
+                }
+
                 $scope.getDir = function documentQuery() {
                     $scope.setAllButtonsEnabled();
                     var ctx = new SP.ClientContext($scope.tabs[$scope.index].url);
@@ -280,7 +264,6 @@
                     ctx.executeQueryAsync(Function.createDelegate($scope, $scope.succeeded),
                         Function.createDelegate($scope, $scope.failed));
                 }
-
 
                 $scope.succeeded = function onSucceededCallback(sender, args) {
 

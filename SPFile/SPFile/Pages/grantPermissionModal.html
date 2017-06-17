@@ -2,7 +2,6 @@
     <h3 class="modal-title" id="modal-title">Create new folder</h3>
 </div>
 <div class="modal-body" id="modal-body">
-
     <label>Select users or groups:</label>
     <ui-select multiple ng-model="$ctrl.permissionItemSelected" theme="bootstrap" sortable="true" close-on-select="false" style="width: auto;">
         <ui-select-match placeholder="Select user or groups...">{{$item.name}} &lt;</ui-select-match>
@@ -20,7 +19,6 @@
             <div ng-bind-html="item.name | highlight: $select.search"></div>
         </ui-select-choices>
     </ui-select>
-
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">OK</button>

@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="../Content/angular-ui-switch.css">
     <link rel="stylesheet" href="../Content/select.css">
     <link rel="stylesheet" href="../Content/permissionModal.css">
-    <%--<link rel ="stylesheet" type="text/css"href="../Content/toaster.css">--%>
+
 
     <link rel ="Stylesheet" type="text/css" href="../Content/App.css" />
     <link rel ="stylesheet" type="text/css" href ="../Content/fileTable.css">
@@ -70,17 +70,6 @@
     <script type ="text/javascript" src ="../Scripts/context.js"></script>
     <script type ="text/javascript" src ="../Scripts/directives/ribbonMenu.js"></script>
 
-   
-    <style>
-        #adress div {
-          display:inline-block  
-        }
-         
-    </style>
-
-    <script>
-       
-    </script>
 
 </asp:Content>
 
@@ -91,31 +80,32 @@
 
 <%-- The markup and script in the following Content element will be placed in the <body> of the page --%>
 <asp:Content ContentPlaceHolderID="PlaceHolderMain" runat="server">
-       
-    <html lang="en" >
 
-    <div ng-controller ="MainInterface">  
-        <%--<toaster-container toaster-options="{'close-button':false, 'time-out':{ 'toast-warning': 2000, 'toast-error': 0 } }"></toaster-container>--%>
-        <ribbon-menu></ribbon-menu>        
+    <html lang="en">
+    <div ng-controller="MainInterface">
+        <ribbon-menu></ribbon-menu>
         <div>
-
-           
-            <div class = "col-sm-8" ng-controller="tabsCtrl">             
-               <uib-tabset active="activeTab">
-                    <uib-tab index="$index" ng-repeat="tab in tabs" select="onSelection($index)" >     
+            <div class="col-sm-8" ng-controller="tabsCtrl">
+                <uib-tabset active="activeTab">
+                    <uib-tab index="$index" ng-repeat="tab in tabs" select="onSelection($index)">
                         <uib-tab-heading>
-                            {{tab.title}}                           
+                            {{tab.title}}
                             <i type="button" ng-click="removeTab($index, $event)" class="glyphicon glyphicon-remove"> </i>
-                        </uib-tab-heading>                                         
+                        </uib-tab-heading>
                         <section ng-controller="tabContentController" ng-init="onStart($index)" style="border: 1px solid black">
                             <div>
-                                <div id="adress" style ="display: inline-block" >
-                                   <button type="button" ng-click ="upBtnClicked()" ng-disabled ="upBtndisabled" class ="btn adress-btn"><span class="glyphicon glyphicon-arrow-up"></span> </button>
-                                    <button type="button" ng-click ="refreshPage()"  class ="btn adress-btn"> <span class="glyphicon glyphicon-refresh"></span></button>
-                                   <div style ="display: inline-block">Adress:</div> <div ng-repeat ="item in adressArray track by $index" class="btn adressItems" ng-click  ="adressItemClicked($index)"> <span class ="glyphicon glyphicon-chevron-right"></span><label>{{item}}</label></div>
+                                <div id="adress" style="display: inline-block">
+                                    <button type="button" ng-click="upBtnClicked()" ng-disabled="upBtndisabled" class="btn adress-btn">
+                                        <span class="glyphicon glyphicon-arrow-up"></span> </button>
+                                    <button type="button" ng-click="refreshPage()" class="btn adress-btn">
+                                        <span class="glyphicon glyphicon-refresh"></span></button>
+                                    <div style="display: inline-block">Adress:</div>
+                                    <div ng-repeat="item in adressArray track by $index" class="btn adressItems" ng-click="adressItemClicked($index)">
+                                        <span class ="glyphicon glyphicon-chevron-right"></span><label>{{item}}</label>
+                                    </div>
                                 </div>
                                 <div></div>
-                            </div>                         
+                            </div>
                             <ul id="selectable"
                                 selectable="selection"
                                 selectable-list="fileItems"
@@ -123,23 +113,17 @@
                                 selectable-events="{start:'selectionStart()', stop:'selectionStop($selected)'}">
                                 <li class="ui-widget-content" ng-repeat="fileItem in fileItems" ng-dblClick="doubleClick()">{{fileItem.name}}</li>
                             </ul>
-                        </section>                                            
+                        </section>
                     </uib-tab>
-                   <uib-tab ng-click="addWorkspace()">
-                       <uib-tab-heading>
-                           <i class="glyphicon glyphicon-plus"></i>
-                       </uib-tab-heading>
-                   </uib-tab>
-               </uib-tabset>
+                    <uib-tab ng-click="addWorkspace()">
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </uib-tab-heading>
+                    </uib-tab>
+                </uib-tabset>
             </div>
-       </div>
- 
+        </div>
     </div>
-  
-
-
-
-
-  </html>   
+    </html>   
 
 </asp:Content>

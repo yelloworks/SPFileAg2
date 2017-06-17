@@ -32,7 +32,7 @@
                     success: function (toastTytle, toastBody) {
                         toaster.pop({
                             type: 'success',
-                            tytle: toastTytle,
+                            title: toastTytle,
                             body: toastBody,
                             timeout: 5000,
                             bodyOutputType: 'trustedHtml',
@@ -42,14 +42,14 @@
                     error: function (toastTytle, toastBody) {
                         toaster.pop({
                             type: 'error',
-                            tytle: toastTytle,
+                            title: toastTytle,
                             body: toastBody,
                             timeout: 5000,
                             bodyOutputType: 'trustedHtml',
                             toasterId: 1
                         });
 
-                    },
+                    }
                 }
 
                 $ctrl.text = "New Folder";

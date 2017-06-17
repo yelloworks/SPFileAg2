@@ -3,14 +3,12 @@
 </div>
 <div class="modal-body" id="modal-body">
     <label>Inherits permissions </label><switch id="enabled" name="enabled" ng-model="$ctrl.isInheritance"></switch><label>Unique permissions</label>
-
     <div class="checkbox">
         <label>
             <input type="checkbox" ng-model="$ctrl.applyToChild">
             <label>Apply to child elements</label>
         </label>
     </div>
-
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">OK</button>
