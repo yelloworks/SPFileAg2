@@ -86,7 +86,7 @@
                     createFolder(file.destenationListId,
                             file.newFolder,
                             function (folder) {
-                                $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
+                                //no create info
                             },
                             function (sender, args) {
                                 toaster.pop('error',
@@ -94,7 +94,6 @@
                                     args.get_message(),
                                     3000,
                                     'trustedHtml');
-                                $log.log(args.get_message());
                             },
                             file.currentItemId,
                             file.destenationRelUrl)
@@ -158,25 +157,24 @@
                             moveItem
                                 ? file.moveTo(destFileUrl, SP.MoveOperations.overwrite)
                                 : file.copyTo(destFileUrl, SP.MoveOperations.overwrite);
-                            ////для идиота, тут копирование выше перемещение
+
 
                             ctx.executeQueryAsync(
                                 function (sender, args) {
-                                    $log.log("File copied.");
                                     deferred.resolve();
                                 },
                                 function (sender, args) {
-                                    alert("Error copying the file.");
+                                   // alert("Error copying the file.");
                                     deferred.reject(sender, args);
                                 }
                             );
                         } else {
-                            alert("404 FILE NOT FOUND!!!");
+                           // alert("404 FILE NOT FOUND!!!");
                             deferred.reject(sender, args);
                         }
                     },
                     function (sender, args) {
-                        alert("Error while getting the file.");
+                        //alert("Error while getting the file.");
                         deferred.reject(sender, args);
                     }
                 );
@@ -193,7 +191,6 @@
                             String.format("Folder '{0}' has been created", folder.get_name()),
                             3000,
                             'trustedHtml');
-                        $log.log(String.format("Folder '{0}' has been created", folder.get_name()));
                     },
                     function (sender, args) {
                         toaster('error',
@@ -201,7 +198,6 @@
                             args.get_message(),
                             3000,
                             'trustedHtml');
-                        $log.log(args.get_message());
                     },
                     "",
                     "");
@@ -209,7 +205,7 @@
 
             function removeFirstSlash(item) {
                 var curItem = item;
-                if (curItem.charAt(0) == '/') { //можно while но не уверен нужно ли
+                if (curItem.charAt(0) == '/') { 
                     curItem = curItem.substr(1);
                 }
                 return curItem;
@@ -224,11 +220,9 @@
                 ctx.executeQueryAsync(
                     function () {
                         defered.resolve();
-                        $log.log("delete success");
                     },
                     function (sender, args) {
                         defered.reject(args.get_message());
-                        $log.log(args.get_message());
                     }
                 );
                 return defered.promise;
@@ -243,11 +237,9 @@
                 ctx.executeQueryAsync(
                     function () {
                         defered.resolve();
-                        $log.log("delete success");
                     },
                     function (sender, args) {
                         defered.reject(args.get_message());
-                        $log.log(args.get_message());
                     }
                 );
                 return defered.promise;
@@ -302,7 +294,7 @@
                         }
                     },
                         function () {
-                            $log.log("Get FILES ERRRORR");
+
                         });
                 }
 
@@ -317,14 +309,8 @@
                     file.checkIn("Text");
                     file.publish();
                     ctx.executeQueryAsync(function (sender, args) {
-                        //  var value = list.get_enableVersioning();
-                        $log.log("file checkedIn");
-                        // $log.log(value);    
                     },
                         function (sender, args) {
-                            $log.log(args.get_message());
-                            // var value = list.get_enableVersioning();
-                            // $log.log(value);
                         });
                 }
 
@@ -335,11 +321,10 @@
                     var file = item.get_file();
                     file.checkOut();
                     ctx.executeQueryAsync(function (sender, args) {
-                        $log.log(name.get_loginName());
-                        $log.log("file checkedOut");
+
                     },
                         function (sender, args) {
-                            $log.log(args.get_message());
+
                         });
 
                 }
@@ -351,18 +336,15 @@
                     var file = item.get_file();
                     var name = file.get_checkedOutByUser();
                     ctx.load(name);
-                    $log.log(name);
                     ctx.executeQueryAsync(function (sender, args) {
-                        $log.log(name.get_loginName());
                         file.undoCheckOut();
-                        $log.log("file undoCheckOut");
                         ctx.executeQueryAsync(function () {
                         }, function (sender, args) {
-                            $log.log(args.get_message());
+
                         });
                     },
                         function (sender, args) {
-                            $log.log(args.get_message());
+
                         });
                 }
 
@@ -380,11 +362,9 @@
                             list.update();
                             ctx.load(list);
                             ctx.executeQueryAsync(function (sender, args) {
-                                $log.log("Done");
                                 deferred.resolve();
                             },
                                 function (sender, args) {
-                                    $log.log(args.get_message());
                                     deferred.reject();
                                 });
                         } else {
@@ -405,8 +385,8 @@
                     var file = item.get_file();
                     ctx.load(file);
                     ctx.executeQueryAsync(function () {
-                        $log.log(file.get_checkOutType());
-                    }, function (sender, args) { $log.log(args.get_message()) });
+
+                    }, function (sender, args) {  });
                 }
 
                 return methods;
@@ -429,12 +409,9 @@
                         var path = file.get_serverRelativeUrl();
                         var webRootFolder = web.get_serverRelativeUrl();
                         var clearPath = path.replace(webRootFolder, "");
-                        $log.log(clearPath);
-                        $log.log(url + clearPath);
                         window.location.href = url + "/_layouts/download.aspx?SourceUrl=" + url + clearPath;
                     },
                         function (sender, args) {
-                            $log.log(args.get_message());
 
                         });
 
@@ -472,12 +449,11 @@
                         };
 
                         clientContext.load(fr.newFile);
-                        clientContext.executeQueryAsync(function () { $log.log("Upload sucesess") },
-                            function (sender, args) { $log.log(args.get_message()) });
+                        clientContext.executeQueryAsync(function () {  },
+                            function (sender, args) {  });
                     };
                     fr.readAsDataURL(file);
                 };
-
 
                 function convertDataUriToBinary(dataUri) {
                     var BASE64_MARKER = ';base64,';
@@ -495,5 +471,223 @@
 
                 return methods;
             });
+
+    angular.module('Abs')
+        .factory('buttonOperations',
+        [
+             'selectedBufferService', 'bufferService', '$log', 'fileOperations', 'checkOperations',
+            'loadOperations',
+            '$uibModal', 'toaster', function(
+                selectedBufferService,
+                bufferService,
+                $log,
+                fileOperations,
+                checkOperations,
+                loadOperations,
+                $uibModal,
+                toaster) {
+
+                var methods = {};
+
+                var showToast = {
+                    success: function(toastTytle, toastBody) {
+                        toaster.pop({
+                            type: 'success',
+                            title: toastTytle,
+                            body: toastBody,
+                            timeout: 5000,
+                            bodyOutputType: 'trustedHtml'
+                        });
+                    },
+                    error: function(toastTytle, toastBody) {
+                        toaster.pop({
+                            type: 'error',
+                            title: toastTytle,
+                            body: toastBody,
+                            timeout: 5000,
+                            bodyOutputType: 'trustedHtml'
+                        });
+                    },
+                    warning: function(toastTytle, toastBody) {
+                        toaster.pop({
+                            type: 'warning',
+                            title: toastTytle,
+                            body: toastBody,
+                            timeout: null,
+                            bodyOutputType: 'trustedHtml'
+                        });
+                    }
+                };
+
+                function deleteForEachSelected(method) {
+                    var sourceItems = selectedBufferService.getBuffer();
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+
+                    if (sourceItems.length != 0) {
+                        var modalInstance = $uibModal.open({
+                            animation: true,
+                            templateUrl: 'solutionModal.html',
+                            controller: 'solutionModalCtrl',
+                            controllerAs: '$ctrl',
+                            resolve: {
+                                actionToDo: function () { return "Delete"; },
+                                itemsCount: function () { return sourceItems.length; }
+                            }
+                        });
+
+                        modalInstance.result.then(function () {
+                            sourceItems.forEach(function (item, i, arr) {
+                                method(sourceUrl, sourceListId, item.ID)
+                                    .then(function () {
+                                        showToast.success("Delete items", "Item deleted: " + item.name);
+                                    },
+                                        function (error) {
+                                            showToast.error("Delete items", item.name + "\n" + error);
+                                        });
+
+                            });
+                        },
+                            function () {
+                                $log.info('Modal dismissed at: ' + new Date());
+                            });
+
+                    }
+                };
+
+
+                methods.copyItems = function () {
+                    bufferService.setBuffer(selectedBufferService.getBuffer(),
+                            selectedBufferService.getInfo(),
+                            false);
+                    toaster.clear();
+                    showToast.warning("Copied", bufferService.getItemsList());
+                };
+
+                methods.pasteItems = function () {
+                    var sourceItems = bufferService.getBuffer();
+                    var sourceUrl = bufferService.getUrl();
+                    var sourceListId = bufferService.getListId();
+                    var sourceRelativeUrl = bufferService.getClearRelativeUrl();
+                    var isCuted = bufferService.getIsCuted();
+                    var destinationUrl = selectedBufferService.getClearRelativeUrl();
+                    var destinationListId = selectedBufferService.getlistID();
+                    if (sourceItems.length != 0) {
+                        sourceItems.forEach(function (item, i, arr) {
+                            fileOperations.CopyOrMove(sourceUrl,
+                                sourceListId,
+                                sourceRelativeUrl,
+                                item.ID,
+                                destinationUrl,
+                                destinationListId,
+                                item.type,
+                                item.name,
+                                isCuted);
+                        });
+
+                    }
+                };
+
+                methods.cutItems = function () {
+                    bufferService.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getInfo(), false);
+                    toaster.clear();
+                    showToast.warning("Cuted", bufferService.getItemsList());
+                };
+
+                methods.addNewFolder = function() {
+                    var url = selectedBufferService.getUrl();
+                    var listId = selectedBufferService.getlistID();
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'folderNameModal.html',
+                        controller: 'ModalInstanceCtrl',
+                        controllerAs: '$ctrl'
+                    });
+
+                    modalInstance.result.then(function (folderName) {
+                        var it = selectedBufferService.getClearRelativeUrl().split('/');
+                        var itnew = it.slice(2, it.length);
+                        itnew.push(folderName);
+                        var relativeUrl = itnew.join('/');
+                        fileOperations.createNewFolder(url, listId, relativeUrl);
+                    },
+                        function () {
+                            $log.info('Modal dismissed at: ' + new Date());
+                        });
+                };
+
+                methods.discardItemsCheckout = function () {
+                    var sourceItems = selectedBufferService.getBuffer();
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+                    var sourceRelativeUrl = selectedBufferService.getRelativeUrl();
+
+                    if (sourceItems.length != 0) {
+                        sourceItems.forEach(function (item, i, arr) {
+                            checkOperations
+                                .undoCheckOut(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, item.type);
+                        });
+                    }
+                };
+
+                methods.deleteItems = function() {
+                    deleteForEachSelected(fileOperations.deleteItem);
+                };
+
+                methods.deleteItemsPermanent = function() {
+                    deleteForEachSelected(fileOperations.deleteItemToRecycle);
+                };
+
+                methods.downloadFile = function() {
+                    var sourceItems = selectedBufferService.getBuffer();
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+                    if (sourceItems.length != 0) {
+                        sourceItems.forEach(function (item, i, arr) {
+                            if (item.type == 0) {
+                                loadOperations.downloadSingleFile(sourceUrl, sourceListId, item.ID);
+                            };
+                        });
+                    }
+                };
+
+                methods.permissions = function() {
+                    if (selectedBufferService.getBuffer().length != 0) {
+                        var modalInstance = $uibModal.open({
+                            animation: true,
+                            templateUrl: 'permissionsModal.html',
+                            controller: 'permissionsModal',
+                            controllerAs: '$ctrl',
+                            size: "lg",
+                            resolve: {
+                                items: function () {
+                                    return selectedBufferService.getBuffer();
+                                },
+                                url: function () {
+                                    return selectedBufferService.getUrl();
+                                },
+                                listId: function () {
+                                    return selectedBufferService.getlistID();
+                                }
+                            }
+                        });
+                        modalInstance.result.then(function () {
+                        },
+                            function () {
+                                $log.info('Modal dismissed at: ' + new Date());
+                            });
+                    };
+                };
+
+                methods.uploadFile = function(files) {
+                    var sourceUrl = selectedBufferService.getUrl();
+                    var sourceListId = selectedBufferService.getlistID();
+                    var sourceRelativeUrl = selectedBufferService.getRelativeUrl();
+                    loadOperations.uploadSingleFile(files, sourceUrl, sourceListId, sourceRelativeUrl);
+                }
+
+                return methods;
+            }
+        ]);
 
 })();

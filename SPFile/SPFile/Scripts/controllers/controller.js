@@ -115,217 +115,49 @@
 
     angular.module('Abs')
         .controller('RibbonButtonsCtrl',
-        [ '$scope', 'selectedBufferService', 'bufferService', '$log', 'fileOperations', 'checkOperations',
-            'loadOperations',
-            '$uibModal', 'toaster', function($scope,
-                selectedBufferService,
-                bufferService,
-                $log,
-                fileOperations,
-                checkOperations,
-                loadOperations,
-                $uibModal,
-                toaster) {
-
-                var showToast = {
-                    success: function(toastTytle, toastBody) {
-                        toaster.pop({
-                            type: 'success',
-                            title: toastTytle,
-                            body: toastBody,
-                            timeout: 5000,
-                            bodyOutputType: 'trustedHtml'
-                        });
-                    },
-                    error: function(toastTytle, toastBody) {
-                        toaster.pop({
-                            type: 'error',
-                            title: toastTytle,
-                            body: toastBody,
-                            timeout: 5000,
-                            bodyOutputType: 'trustedHtml'
-                        });
-                    },
-                    warning: function(toastTytle, toastBody) {
-                        toaster.pop({
-                            type: 'warning',
-                            title: toastTytle,
-                            body: toastBody,
-                            timeout: null,
-                            bodyOutputType: 'trustedHtml'
-                        });
-                    }
-                };
-
-                function deleteForEachSelected(method) {
-                    var sourceItems = selectedBufferService.getBuffer();
-                    var sourceUrl = selectedBufferService.getUrl();
-                    var sourceListId = selectedBufferService.getlistID();
-
-                    if (sourceItems.length != 0) {
-                        var modalInstance = $uibModal.open({
-                            animation: true,
-                            templateUrl: 'solutionModal.html',
-                            controller: 'solutionModalCtrl',
-                            controllerAs: '$ctrl',
-                            resolve: {
-                                actionToDo: function() { return "Delete"; },
-                                itemsCount: function() { return sourceItems.length; }
-                            }
-                        });
-
-                        modalInstance.result.then(function() {
-                                sourceItems.forEach(function(item, i, arr) {
-                                    method(sourceUrl, sourceListId, item.ID)
-                                        .then(function() {
-                                                showToast.success("Delete items", "Item deleted: " + item.name);
-                                            },
-                                            function(error) {
-                                                showToast.error("Delete items", item.name + "\n" + error);
-                                            });
-
-                                });
-                            },
-                            function() {
-                                $log.info('Modal dismissed at: ' + new Date());
-                            });
-
-                    }
-                };
+        [
+            '$scope', 'buttonOperations', function($scope, buttonOperations) {
 
                 $scope.copyBtnClicked = function() {
-                    bufferService.setBuffer(selectedBufferService.getBuffer(),
-                        selectedBufferService.getInfo(),
-                        false);
-                    toaster.clear();
-                    showToast.warning("Copied", bufferService.getItemsList());
+                    buttonOperations.copyItems();
                 };
 
                 $scope.pasteBtnClicked = function() {
-                    var sourceItems = bufferService.getBuffer();
-                    var sourceUrl = bufferService.getUrl();
-                    var sourceListId = bufferService.getListId();
-                    var sourceRelativeUrl = bufferService.getClearRelativeUrl();
-                    var isCuted = bufferService.getIsCuted();
-                    var destinationUrl = selectedBufferService.getClearRelativeUrl();
-                    var destinationListId = selectedBufferService.getlistID();
-                    if (sourceItems.length != 0) {
-                        sourceItems.forEach(function(item, i, arr) {
-                            fileOperations.CopyOrMove(sourceUrl,
-                                sourceListId,
-                                sourceRelativeUrl,
-                                item.ID,
-                                destinationUrl,
-                                destinationListId,
-                                item.type,
-                                item.name,
-                                isCuted);
-                        });
-
-                    }
+                    buttonOperations.pasteItems();
                 };
 
                 $scope.cutBtnClicked = function() {
-                    bufferService.setBuffer(selectedBufferService.getBuffer(), selectedBufferService.getInfo(), false);
-                    toaster.clear();
-                    showToast.warning("Cuted", bufferService.getItemsList());
+                    buttonOperations.cutItems();
                 };
 
                 $scope.addFolderBtnClicked = function() {
-                    var url = selectedBufferService.getUrl();
-                    var listId = selectedBufferService.getlistID();
-                    var modalInstance = $uibModal.open({
-                        animation: true,
-                        templateUrl: 'folderNameModal.html',
-                        controller: 'ModalInstanceCtrl',
-                        controllerAs: '$ctrl'
-                    });
-
-                    modalInstance.result.then(function(folderName) {
-                            var it = selectedBufferService.getClearRelativeUrl().split('/');
-                            var itnew = it.slice(2, it.length);
-                            itnew.push(folderName);
-                            var relativeUrl = itnew.join('/');
-                            fileOperations.createNewFolder(url, listId, relativeUrl);
-                        },
-                        function() {
-                            $log.info('Modal dismissed at: ' + new Date());
-                        });
-
-
+                    buttonOperations.addNewFolder();
                 };
 
                 $scope.discardCheckoutBtnClicked = function() {
-                    var sourceItems = selectedBufferService.getBuffer();
-                    var sourceUrl = selectedBufferService.getUrl();
-                    var sourceListId = selectedBufferService.getlistID();
-                    var sourceRelativeUrl = selectedBufferService.getRelativeUrl();
-
-                    if (sourceItems.length != 0) {
-                        sourceItems.forEach(function(item, i, arr) {
-                            checkOperations
-                                .undoCheckOut(sourceUrl, sourceListId, sourceRelativeUrl, item.ID, item.type);
-                        });
-                    }
+                    buttonOperations.discardItemsCheckout();
                 };
 
                 $scope.deleteBtnClicked = function() {
-                    deleteForEachSelected(fileOperations.deleteItem);
+                    buttonOperations.deleteItems();
                 };
 
                 $scope.deletePermanentBtnClicked = function() {
-                    deleteForEachSelected(fileOperations.deleteItemToRecycle);
+                    buttonOperations.deleteItemsPermanent();
                 };
 
                 $scope.downloadFileBtnClicked = function() {
-                    var sourceItems = selectedBufferService.getBuffer();
-                    var sourceUrl = selectedBufferService.getUrl(); 
-                    var sourceListId = selectedBufferService.getlistID();
-                    if (sourceItems.length != 0) {
-                        sourceItems.forEach(function(item, i, arr) {
-                            if (item.type == 0) {
-                                loadOperations.downloadSingleFile(sourceUrl, sourceListId, item.ID);
-                            };
-                        });
-                    }
+                    buttonOperations.downloadFile();
                 };
 
                 $scope.permissionsBtnClicked = function() {
-                    if (selectedBufferService.getBuffer().length != 0) {
-                        var modalInstance = $uibModal.open({
-                            animation: true,
-                            templateUrl: 'permissionsModal.html',
-                            controller: 'permissionsModal',
-                            controllerAs: '$ctrl',
-                            size: "lg",
-                            resolve: {
-                                items: function() {
-                                    return selectedBufferService.getBuffer();
-                                },
-                                url: function() {
-                                    return selectedBufferService.getUrl();
-                                },
-                                listId: function() {
-                                    return selectedBufferService.getlistID();
-                                }
-                            }
-                        });
-                        modalInstance.result.then(function() {
-                            },
-                            function() {
-                                $log.info('Modal dismissed at: ' + new Date());
-                            });
-                    };
+                    buttonOperations.permissions();
                 };
 
                 var input = document.getElementById("fileinput");
                 input.addEventListener('change',
                     function(e) {
-                        var sourceUrl = selectedBufferService.getUrl();
-                        var sourceListId = selectedBufferService.getlistID();
-                        var sourceRelativeUrl = selectedBufferService.getRelativeUrl();
-                        var files = e.target.files;
-                        loadOperations.uploadSingleFile(files, sourceUrl, sourceListId, sourceRelativeUrl);
+                        buttonOperations.uploadFile(e.target.files);
                     });
             }
         ]);
